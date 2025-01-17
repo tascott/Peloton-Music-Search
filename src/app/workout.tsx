@@ -9,20 +9,20 @@ type WorkoutSong = {
 	image_url: string;
 };
 
-type Workout = {
+type WorkoutType = {
 	id: string;
 	title: string;
-	duration: number;
-	image_url: string;
-	instructor_id: string;
-	description: string;
-	fitness_discipline: string;
-	scheduled_time: string;
-	difficulty_rating_avg: number;
+	duration?: number;
+	image_url?: string;
+	instructor_id?: string;
+	description?: string;
+	fitness_discipline?: string;
+	scheduled_time?: string;
+	difficulty_rating_avg?: number;
 	song?: WorkoutSong;
 };
 
-export default function Workout(props: { workout: Workout }) {
+export default function Workout(props: { workout: WorkoutType }) {
 	const { workout } = props;
 	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout.id}`;
 
