@@ -22,7 +22,6 @@ type WorkoutType = {
 	fitness_discipline?: string;
 	scheduled_time?: string;
 	difficulty_rating_avg?: number;
-	song?: WorkoutSong;
 };
 
 export default function SongDetail(props: SongDetailProps) {
