@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 
 // TS type for instructor data
@@ -12,10 +12,12 @@ type Instructor = {
 export default function Instructors() {
 	// Component code
 	const [instructors, setInstructors] = useState<Instructor[]>([]);
+	const [searchTerm, setSearchTerm] = useState('');
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
+		// runs once "when the component mounts" i.e. after the component is rendered
 		fetchInstructors();
 	}, []);
 
@@ -37,11 +39,26 @@ export default function Instructors() {
 		}
 	};
 
+	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(e.target.value);
+	};
+
+	const updatedInstructors = instructors.filter((instructor) =>
+		instructor.name.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+
 	return (
-		<ul>
-			{instructors?.map((instructor) => (
-				<li key={instructor.id}>{instructor.name}</li>
-			))}
-		</ul>
+		<div>
+			<input
+				type="text"
+				placeholder="Search instructors"
+				onChange={handleSearch}
+			/>
+			<ul>
+				{updatedInstructors?.map((instructor) => (
+					<li key={instructor.id}>{instructor.name}</li>
+				))}
+			</ul>
+		</div>
 	);
 }
