@@ -1,7 +1,6 @@
 'use client';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
-import Workout from './workout';
 import SongDetail from './songDetail';
 
 type Song = {
@@ -15,8 +14,6 @@ type Song = {
 export default function Instructors() {
 	const [songs, setSongs] = useState<Song[]>([]);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [error, setError] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchSongs = async () => {
 		try {
@@ -29,10 +26,10 @@ export default function Instructors() {
 			console.log(data);
 			setSongs(data);
 		} catch (error) {
-			setError('Error fetching instructors');
+			// setError('Error fetching instructors');
 			console.error(error);
 		} finally {
-			setIsLoading(false);
+			// setIsLoading(false);
 		}
 	};
 
