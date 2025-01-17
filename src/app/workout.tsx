@@ -52,7 +52,7 @@ export default function Workout(props: { workout: WorkoutType }) {
 			)}
 			<h2 className={styles.title}>{workout.title}</h2>
 			<p className={styles.details}>
-				Duration: {convertToMinutes(workout.duration)}
+				{workout.duration && `Duration: ${convertToMinutes(workout.duration)}`}
 			</p>
 			<button
 				className={styles.button}
