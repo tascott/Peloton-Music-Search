@@ -1,5 +1,5 @@
 import styles from './page.module.css';
-import Instructors from './instructors';
+// import Instructors from './instructors';
 import Search from './search';
 export default function Home() {
 	return (

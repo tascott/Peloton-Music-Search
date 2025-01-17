@@ -25,7 +25,7 @@ export default function SongDetail(props: SongDetailProps) {
 	useEffect(() => {
 		// Only fetch workout once when component mounts
 		const fetchWorkout = async () => {
-			const { data, error } = await supabase
+			const { data } = await supabase
 				.from('web_workouts')
 				.select('*')
 				.eq('id', props.workout_id)

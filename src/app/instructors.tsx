@@ -13,8 +13,8 @@ export default function Instructors() {
 	// Component code
 	const [instructors, setInstructors] = useState<Instructor[]>([]);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	// const [isLoading, setIsLoading] = useState(true);
+	// const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		// runs once "when the component mounts" i.e. after the component is rendered
@@ -32,10 +32,10 @@ export default function Instructors() {
 
 			setInstructors(data);
 		} catch (error) {
-			setError('Error fetching instructors');
+			// setError('Error fetching instructors');
 			console.error(error);
 		} finally {
-			setIsLoading(false);
+			// setIsLoading(false);
 		}
 	};
 
