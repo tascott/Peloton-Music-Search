@@ -25,7 +25,7 @@ export default function Instructors() {
 		try {
 			const { data, error } = await supabase
 				.from('instructors') // table name
-				.select('*'); // select all fields
+				.select('*'); // return all fields
 			// TBC .select('id, name, specific_fields')
 
 			if (error) throw error;
