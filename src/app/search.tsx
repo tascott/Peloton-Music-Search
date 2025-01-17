@@ -24,7 +24,7 @@ export default function Instructors() {
 				.from('songs') // table name
 				.select('id, title, artist_names, workout_id, image_url') // return all these fields
 				.eq('title', searchTerm) // where title matches searchTerm
-				.limit(5);
+				.limit(25);
 			if (error) throw error;
 			console.log(data);
 			setSongs(data);
@@ -52,7 +52,6 @@ export default function Instructors() {
 				onChange={handleSearch}
 			/>
 			<button onClick={handleFetch}>Fetch</button>
-			<p>{searchTerm}</p>
 			<ul>
 				{songs.map((song) => (
 					<SongDetail

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Workout from './workout';
+import styles from './songdetail.module.css';
 
 type SongDetailProps = {
 	workout_id: string;
@@ -37,8 +38,8 @@ export default function SongDetail(props: SongDetailProps) {
 	}, [props.workout_id]); // Only re-run if workout_id changes
 
 	return (
-		<div>
-			{props.title} - {props.artist_names} - Workout ID:{props.workout_id}
+		<div className={styles.resultContainer}>
+			{props.title} - {props.artist_names}
 			<img src={props.image_url} alt={props.title} height={100} />
 			{workout && <Workout workout={workout} />}
 		</div>
