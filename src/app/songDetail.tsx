@@ -13,11 +13,16 @@ type SongDetailProps = {
 };
 
 type WorkoutType = {
-	workout_id: string;
-	id: number;
+	id: string;
 	title: string;
-	artist_names: string;
-	image_url: string;
+	duration?: number;
+	image_url?: string;
+	instructor_id?: string;
+	description?: string;
+	fitness_discipline?: string;
+	scheduled_time?: string;
+	difficulty_rating_avg?: number;
+	song?: WorkoutSong;
 };
 
 export default function SongDetail(props: SongDetailProps) {
@@ -27,7 +32,17 @@ export default function SongDetail(props: SongDetailProps) {
 		const fetchWorkout = async () => {
 			const { data } = await supabase
 				.from('web_workouts')
-				.select('*')
+				.select(`
+					id,
+					title,
+					duration,
+					image_url,
+					instructor_id,
+					description,
+					fitness_discipline,
+					scheduled_time,
+					difficulty_rating_avg
+				`)
 				.eq('id', props.workout_id)
 				.single();
 
