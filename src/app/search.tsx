@@ -40,7 +40,7 @@ export default function Instructors() {
 			const { data, error } = await supabase
 				.from('songs') // table name
 				.select('id, title, artist_names, workout_id, image_url') // return all these fields
-				.ilike('artist_names', `%${searchTerm}%`) // where title matches searchTerm - case insensitive
+				.ilike('artist_names', `%${artistSearchTerm}%`) // where title matches searchTerm - case insensitive
 				.limit(25);
 			if (error) throw error;
 			console.log(data);
