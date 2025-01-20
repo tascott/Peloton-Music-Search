@@ -2,7 +2,7 @@
 import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import SongDetail from './songDetail';
-
+import RideTimeRow from './rideTimeRow';
 type Song = {
 	workout_id: string;
 	id: number;
@@ -53,34 +53,35 @@ export default function Instructors() {
 		}
 	};
 
-	const handleSongSearch = (e: ChangeEvent<HTMLInputElement>) => {
-		setSongSearchTerm(e.target.value);
+	const handleAddToSearch = (e: ChangeEvent<HTMLInputElement>) => {
+		const type = e.target.getAttribute('param-type');
+		if (type === 'artist') {
+			setArtistSearchTerm(e.target.value);
+		} else {
+			setSongSearchTerm(e.target.value);
+		}
 	};
 
-	const handleArtistSearch = (e: ChangeEvent<HTMLInputElement>) => {
-		setArtistSearchTerm(e.target.value);
-	};
 
-	const handleFetchSongs = () => {
-		fetchSongs();
-	};
-
-	const handleFetchArtists = () => {
+	const handleFetchArtists = (e: React.MouseEvent<HTMLButtonElement>) => {
 		fetchArtists();
 	};
 
 	return (
 		<div>
+			<RideTimeRow />
 			<input
 				type="text"
 				placeholder="Search songs"
-				onChange={handleSongSearch}
+				param-type="song"
+				onChange={handleAddToSearch}
 			/>
-			<button onClick={handleFetchSongs}>Fetch</button>
+			<br />
 			<input
 				type="text"
 				placeholder="Search artists"
-				onChange={handleArtistSearch}
+				param-type="artist"
+				onChange={handleAddToSearch}
 			/>
 			<button onClick={handleFetchArtists}>Fetch</button>
 			<ul>
