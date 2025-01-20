@@ -6,7 +6,6 @@ export default function Home() {
 		<div className={styles.page}>
 			<main className={styles.main}>
 				<Search />
-				{/* <Instructors /> */}
 			</main>
 		</div>
 	);

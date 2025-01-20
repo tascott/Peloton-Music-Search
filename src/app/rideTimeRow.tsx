@@ -15,12 +15,12 @@ const rideTimes = {
     7200: '120 minutes',
 }
 
-export default function rideTimeRow() {
-    const [selectedTimes, setSelectedTimes] = useState([]);
+export default function RideTimeRow() {
+    const [selectedTimes, setSelectedTimes] = useState<number[]>([]);
 
     const handleTimeClick = (seconds: number) => {
-        console.log(seconds);
         setSelectedTimes((prev) => [...prev, seconds]);
+        console.log(selectedTimes);
     }
 
 	return (
@@ -28,7 +28,11 @@ export default function rideTimeRow() {
 			{Object.entries(rideTimes).map(([seconds, label]) => (
 				<button
 					key={seconds}
-					className={styles.timeButton}
+					className={
+						selectedTimes.includes(parseInt(seconds))
+							? styles.timeButtonSelected
+							: styles.timeButton
+					}
 					onClick={() => handleTimeClick(parseInt(seconds))}
 				>
 					{label}

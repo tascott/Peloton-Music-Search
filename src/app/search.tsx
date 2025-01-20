@@ -3,6 +3,7 @@ import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import SongDetail from './songDetail';
 import RideTimeRow from './rideTimeRow';
+
 type Song = {
 	workout_id: string;
 	id: number;
@@ -11,7 +12,7 @@ type Song = {
 	image_url: string;
 };
 
-export default function Instructors() {
+export default function Search() {
 	const [songs, setSongs] = useState<Song[]>([]);
 	const [searchTerm, setSongSearchTerm] = useState('');
 	const [artists, setArtists] = useState<Song[]>([]);
@@ -93,16 +94,6 @@ export default function Instructors() {
 						artist_names={song.artist_names}
 						image_url={song.image_url}
 						workout_id={song.workout_id}
-					/>
-				))}
-				{artists.map((artist) => (
-					<SongDetail
-						key={artist.id}
-						id={artist.id}
-						title={artist.title}
-						artist_names={artist.artist_names}
-						image_url={artist.image_url}
-						workout_id={artist.workout_id}
 					/>
 				))}
 			</ul>
