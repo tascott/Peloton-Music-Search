@@ -27,10 +27,10 @@ type WorkoutType = {
 
 export default function SongDetail(props: SongDetailProps) {
 	const [workout, setWorkout] = useState<WorkoutType | null>(null);
+
 	useEffect(() => {
-		// Only fetch workout once when component mounts
 		const fetchWorkout = async () => {
-			let query = supabase
+			const { data } = await supabase
 				.from('web_workouts')
 				.select(`
 					id,
@@ -42,15 +42,7 @@ export default function SongDetail(props: SongDetailProps) {
 					fitness_discipline,
 					scheduled_time,
 					difficulty_rating_avg
-				`);
-
-			// if selectedTimes is not empty, filter by selectedTimes
-			if (props.selectedTimes.length > 0) {
-				console.log('selectimes > 0');
-				query = query.in('duration', props.selectedTimes);
-			}
-
-			const { data } = await query
+				`)
 				.eq('id', props.workout_id)
 				.single();
 
@@ -58,11 +50,16 @@ export default function SongDetail(props: SongDetailProps) {
 		};
 
 		fetchWorkout();
-	}, [props.workout_id, props.selectedTimes]); // Add props.selectedTimes to dependency array
+	}, [props.workout_id]); // Update when workout_id changes, i.e. when a new song is added
+
+	// Determine if we should show the workout based on selected times (TODO: also add instructors, and difficulty rating)
+	const shouldShowWorkout =
+		workout &&
+		(props.selectedTimes.length === 0 || props.selectedTimes.includes(workout.duration || 0));
 
 	return (
-		<div className={styles.resultContainer}>
-			{workout && (
+		<div>
+			{shouldShowWorkout && (
 				<Workout
 					workout={workout}
 					songData={{

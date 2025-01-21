@@ -81,11 +81,6 @@ export default function Search() {
 
 	return (
 		<div>
-			<RideTimeRow
-				rideTimes={rideTimes}
-				selectedTimes={selectedTimes}
-				onTimeSelect={handleTimeSelection}
-			/>
 			<input
 				type="text"
 				placeholder="Search songs"
@@ -100,6 +95,11 @@ export default function Search() {
 				onChange={handleAddToSearch}
 			/>
 			<button onClick={fetchSongList}>Fetch</button>
+			<RideTimeRow
+				rideTimes={rideTimes}
+				selectedTimes={selectedTimes}
+				onTimeSelect={handleTimeSelection}
+			/>
 			<ul>
 				{songs.map((song) => (
 					<SongDetail
