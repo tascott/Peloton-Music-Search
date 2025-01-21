@@ -12,45 +12,61 @@ type Song = {
 	image_url: string;
 };
 
+const rideTimes = {
+	300: '5 minutes',
+	600: '10 minutes',
+	900: '15 minutes',
+	1200: '20 minutes',
+	1800: '30 minutes',
+	2700: '45 minutes',
+	3600: '60 minutes',
+	4500: '75 minutes',
+	5400: '90 minutes',
+	7200: '120 minutes',
+};
+
 export default function Search() {
 	const [songs, setSongs] = useState<Song[]>([]);
-	const [searchTerm, setSongSearchTerm] = useState('');
-	const [artists, setArtists] = useState<Song[]>([]);
-	const [artistSearchTerm, setArtistSearchTerm] = useState('');
+	const [songSearchTerm, setSongSearchTerm] = useState(''); // From the songs input
+	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
+	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
 
-	const fetchSongs = async () => {
-		try {
-			const { data, error } = await supabase
-				.from('songs') // table name
-				.select('id, title, artist_names, workout_id, image_url') // return all these fields
-				.ilike('title', `%${searchTerm}%`) // where title matches searchTerm - case insensitive
-				.limit(25);
-			if (error) throw error;
-			console.log(data);
-			setSongs(data);
-		} catch (error) {
-			// setError('Error fetching instructors');
-			console.error(error);
-		} finally {
-			// setIsLoading(false);
-		}
+	const handleTimeSelection = (times: number[]) => {
+		// This function is passed from RideTimeRow
+		setSelectedTimes(times);
 	};
 
-	const fetchArtists = async () => {
+	// Artists
+	// .from('songs')
+	// .select('id, title, artist_names, workout_id, image_url')
+	// .ilike('artist_names', `%${artistSearchTerm}%`)
+
+	// Songs
+	// .from('songs') // table name
+	// .select('id, title, artist_names, workout_id, image_url')
+	// .ilike('title', `%${searchTerm}%`)
+	// .limit(25);
+
+	const fetchSongList = async () => {
 		try {
-			const { data, error } = await supabase
-				.from('songs') // table name
-				.select('id, title, artist_names, workout_id, image_url') // return all these fields
-				.ilike('artist_names', `%${artistSearchTerm}%`) // where title matches searchTerm - case insensitive
-				.limit(25);
+			let query = supabase
+				.from('songs')
+				.select('id, title, artist_names, workout_id, image_url');
+
+			// Each search term only looks in its own column
+			if (songSearchTerm) {
+				query = query.ilike('title', `%${songSearchTerm}%`);
+			}
+			if (artistSearchTerm) {
+				query = query.ilike('artist_names', `%${artistSearchTerm}%`);
+			}
+
+			const { data, error } = await query.limit(25);
+
 			if (error) throw error;
-			console.log(data);
-			setArtists(data);
+			setSongs(data);
 		} catch (error) {
-			// setError('Error fetching instructors');
 			console.error(error);
-		} finally {
-			// setIsLoading(false);
 		}
 	};
 
@@ -63,14 +79,13 @@ export default function Search() {
 		}
 	};
 
-
-	const handleFetchArtists = (e: React.MouseEvent<HTMLButtonElement>) => {
-		fetchArtists();
-	};
-
 	return (
 		<div>
-			<RideTimeRow />
+			<RideTimeRow
+				rideTimes={rideTimes}
+				selectedTimes={selectedTimes}
+				onTimeSelect={handleTimeSelection}
+			/>
 			<input
 				type="text"
 				placeholder="Search songs"
@@ -84,7 +99,7 @@ export default function Search() {
 				param-type="artist"
 				onChange={handleAddToSearch}
 			/>
-			<button onClick={handleFetchArtists}>Fetch</button>
+			<button onClick={fetchSongList}>Fetch</button>
 			<ul>
 				{songs.map((song) => (
 					<SongDetail
