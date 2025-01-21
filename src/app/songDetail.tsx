@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Workout from './workout';
-import styles from './songdetail.module.css';
+import { getInstructorById } from '@/data/instructors';
 
 interface SongDetailProps {
 	id: number;
