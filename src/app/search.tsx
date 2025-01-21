@@ -3,6 +3,9 @@ import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import SongDetail from './songDetail';
 import RideTimeRow from './rideTimeRow';
+import InstructorRow from './instructorRow';
+import styles from './search.module.css';
+
 
 type Song = {
 	workout_id: string;
@@ -80,26 +83,30 @@ export default function Search() {
 	};
 
 	return (
-		<div>
+		<div className={styles.searchContainer}>
 			<input
 				type="text"
 				placeholder="Search songs"
 				param-type="song"
 				onChange={handleAddToSearch}
+				className={styles.searchInput}
 			/>
-			<br />
 			<input
 				type="text"
 				placeholder="Search artists"
 				param-type="artist"
 				onChange={handleAddToSearch}
+				className={styles.searchInput}
 			/>
-			<button onClick={fetchSongList}>Fetch</button>
+			<button onClick={fetchSongList} className={styles.fetchButton}>
+				Fetch
+			</button>
 			<RideTimeRow
 				rideTimes={rideTimes}
 				selectedTimes={selectedTimes}
 				onTimeSelect={handleTimeSelection}
 			/>
+			<InstructorRow />
 			<ul>
 				{songs.map((song) => (
 					<SongDetail

@@ -136,7 +136,7 @@ export const instructors = {
     },
     '5a19bfe66e644a2fa3e6387a91ebc5ce': {
         id: '5a19bfe66e644a2fa3e6387a91ebc5ce',
-        name: 'Christine D'Ercole',
+        name: 'Christine D\'Ercole',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/dd9fb14fad3d4d0d9e12884b6a55bae7'
     },
     '5c784412fb234b2b833dda585d518642': {
