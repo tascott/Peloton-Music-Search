@@ -109,6 +109,7 @@ export default function Search() {
 						artist_names={song.artist_names}
 						image_url={song.image_url}
 						workout_id={song.workout_id}
+						selectedTimes={selectedTimes}
 					/>
 				))}
 			</ul>

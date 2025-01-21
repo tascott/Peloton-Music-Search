@@ -4,13 +4,14 @@ import { supabase } from '@/lib/supabase';
 import Workout from './workout';
 import styles from './songdetail.module.css';
 
-type SongDetailProps = {
-	workout_id: string;
+interface SongDetailProps {
 	id: number;
 	title: string;
 	artist_names: string;
 	image_url: string;
-};
+	workout_id: string;
+	selectedTimes: number[];
+}
 
 type WorkoutType = {
 	id: string;
@@ -29,7 +30,7 @@ export default function SongDetail(props: SongDetailProps) {
 	useEffect(() => {
 		// Only fetch workout once when component mounts
 		const fetchWorkout = async () => {
-			const { data } = await supabase
+			let query = supabase
 				.from('web_workouts')
 				.select(`
 					id,
@@ -41,7 +42,15 @@ export default function SongDetail(props: SongDetailProps) {
 					fitness_discipline,
 					scheduled_time,
 					difficulty_rating_avg
-				`)
+				`);
+
+			// if selectedTimes is not empty, filter by selectedTimes
+			if (props.selectedTimes.length > 0) {
+				console.log('selectimes > 0');
+				query = query.in('duration', props.selectedTimes);
+			}
+
+			const { data } = await query
 				.eq('id', props.workout_id)
 				.single();
 
@@ -49,13 +58,20 @@ export default function SongDetail(props: SongDetailProps) {
 		};
 
 		fetchWorkout();
-	}, [props.workout_id]); // Only re-run if workout_id changes
+	}, [props.workout_id, props.selectedTimes]); // Add props.selectedTimes to dependency array
 
 	return (
 		<div className={styles.resultContainer}>
-			{props.title} - {props.artist_names}
-			<img src={props.image_url} alt={props.title} height={100} />
-			{workout && <Workout workout={workout} />}
+			{workout && (
+				<Workout
+					workout={workout}
+					songData={{
+						image_url: props.image_url,
+						title: props.title,
+						artist: props.artist_names,
+					}}
+				/>
+			)}
 		</div>
 	);
 }
