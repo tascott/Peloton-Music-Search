@@ -84,6 +84,7 @@ export default function Search() {
 
 	return (
 		<div className={styles.searchContainer}>
+			<h1 className={styles.title}>Peloton Music Search</h1>
 			<input
 				type="text"
 				placeholder="Search songs"
@@ -107,8 +108,8 @@ export default function Search() {
 				onTimeSelect={handleTimeSelection}
 			/>
 			<InstructorRow />
-			<ul>
-				{songs.map((song) => (
+			<div className={styles.songList}>
+				{songs?.map((song) => (
 					<SongDetail
 						key={song.id}
 						id={song.id}
@@ -119,7 +120,7 @@ export default function Search() {
 						selectedTimes={selectedTimes}
 					/>
 				))}
-			</ul>
+			</div>
 		</div>
 	);
 }

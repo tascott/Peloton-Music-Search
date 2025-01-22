@@ -1,4 +1,11 @@
-export const instructors = {
+interface Instructor {
+    id: string;
+    name: string;
+    image_url: string;
+    type?: 'other' | 'single';
+}
+
+export const instructors: Record<string, Instructor> = {
     '017dd08b095346979ddf761eb49f9f67': {
         id: '017dd08b095346979ddf761eb49f9f67',
         name: 'Erik Jäger',
@@ -22,11 +29,13 @@ export const instructors = {
     '096de802dbb1428b95aae223b7364799': {
         id: '096de802dbb1428b95aae223b7364799',
         name: 'Jess & Robin',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/9fb1cd6881f84436b86227c85aa1b103'
     },
     '09ca61e720824073b26c36677fb15b0e': {
         id: '09ca61e720824073b26c36677fb15b0e',
         name: 'Ben & Leanne',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/0629a5c915724fcfa6a4b4fb660e4c6d'
     },
     '0ac29effd55a435bad2f5c07cab8e567': {
@@ -37,6 +46,7 @@ export const instructors = {
     '0d41a81a64bc4e38866bc01a0918020f': {
         id: '0d41a81a64bc4e38866bc01a0918020f',
         name: 'Cody & Emma',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/44f6c2fce0754756a67891f692978f8b'
     },
     '0e836f86aa9c488782452243f2e17170': {
@@ -47,6 +57,7 @@ export const instructors = {
     '0ebae5c509634ab0b46e1249f75cf37f': {
         id: '0ebae5c509634ab0b46e1249f75cf37f',
         name: 'Alex & Tunde',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/e4f5bdd25e044749880a0715c847c061'
     },
     '1b79e462bd564b6ca5ec728f1a5c2af0': {
@@ -62,11 +73,13 @@ export const instructors = {
     '2532a869b9304a279becaf39c9aae182': {
         id: '2532a869b9304a279becaf39c9aae182',
         name: 'Multiple Instructors',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/d1323e5dd4c94c65baaf7584f8d9f574'
     },
     '2e1dd0aeae654d208cd8ea0f6145440c': {
         id: '2e1dd0aeae654d208cd8ea0f6145440c',
         name: 'Ally & Emma',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/2553a581582a4233b1d7db80ca13ba66'
     },
     '2e57092bee334c8c8dcb9fe16ba5308c': {
@@ -82,6 +95,7 @@ export const instructors = {
     '313df4bf5c2f4a08ad555613d1ebd324': {
         id: '313df4bf5c2f4a08ad555613d1ebd324',
         name: 'Camila & Cody',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/c8ae517bac384967b46be0ecc4649215'
     },
     '35016225e39d46dbbc364991ab48e10f': {
@@ -92,6 +106,7 @@ export const instructors = {
     '3afdc3ead3734ce1889d25804052d853': {
         id: '3afdc3ead3734ce1889d25804052d853',
         name: 'Multiple Instructors',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/f963e7e3c1c045d4b10aee42407c037d'
     },
     '3ff679ebbd324c83a8ab6cfa6bb4be37': {
@@ -102,6 +117,7 @@ export const instructors = {
     '4039531b0cbf4fd49e9dae48fb96b667': {
         id: '4039531b0cbf4fd49e9dae48fb96b667',
         name: 'Multiple Instructors',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/38bb5a20d3364a318dc2aa4bcbdc5397'
     },
     '4672db841da0495caf4b8f9cda405512': {
@@ -122,6 +138,7 @@ export const instructors = {
     '55da0d66d75d4e52b06bf6376f6731b6': {
         id: '55da0d66d75d4e52b06bf6376f6731b6',
         name: 'Alex & Jenn',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/0778ec40abfb4cc0a707dbe5f00e7f17'
     },
     '561f95c405734d8488ed8dcc8980d599': {
@@ -132,16 +149,18 @@ export const instructors = {
     '580261f1ac95448bbfd208bbaaa8b9ad': {
         id: '580261f1ac95448bbfd208bbaaa8b9ad',
         name: 'Cycling Instructors 2019',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/980b38bc970247028a8c1d64fb4076f5'
     },
     '5a19bfe66e644a2fa3e6387a91ebc5ce': {
         id: '5a19bfe66e644a2fa3e6387a91ebc5ce',
-        name: 'Christine D\'Ercole',
+        name: "Christine D'Ercole",
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/dd9fb14fad3d4d0d9e12884b6a55bae7'
     },
     '5c784412fb234b2b833dda585d518642': {
         id: '5c784412fb234b2b833dda585d518642',
         name: 'Denis & Matt',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/381fd66e635343d3b7be1774a8c59d0b'
     },
     '696bd08dd5284accab065e2147b121d7': {
@@ -157,6 +176,7 @@ export const instructors = {
     '7d8b0bf272734f548d90af0bd8cd20cd': {
         id: '7d8b0bf272734f548d90af0bd8cd20cd',
         name: 'Cliff & Hannah',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/65fd8a39376749488db8a5cb614b919a'
     },
     '7f3de5e78bb44d8591a0f77f760478c3': {
@@ -167,11 +187,13 @@ export const instructors = {
     '8386bbbbc4bd42d798262feaf9b109fc': {
         id: '8386bbbbc4bd42d798262feaf9b109fc',
         name: 'Alex & Ally',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/fb3d29b150ab490aa203ada7b68cc42b'
     },
     '99cef0bf72a54b47a5d69d3c4c2c5ff7': {
         id: '99cef0bf72a54b47a5d69d3c4c2c5ff7',
         name: 'Hannah & Leanne',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/18c2f8f65ff947cb8bab38fdb914684a'
     },
     '9c67c1b94e5d4ad5a1cbe439ac62eb75': {
@@ -192,6 +214,7 @@ export const instructors = {
     'b16d1fcd134345b1a0c94336b4895f22': {
         id: 'b16d1fcd134345b1a0c94336b4895f22',
         name: 'Jess & Robin',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/eef04d557a614ea5aa81ae7a463537d8'
     },
     'baf5dfb4c6ac4968b2cb7f8f8cc0ef10': {
@@ -216,17 +239,20 @@ export const instructors = {
     },
     'dd1300f8c5264d6f94d33cf4857b1159': {
         id: 'dd1300f8c5264d6f94d33cf4857b1159',
+        type: 'other',
         name: 'Bradley & Sam',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/d57c3b0c021349779fe0f2a79e4c4049'
     },
     'e0c54c13f8a2480e90987e2faf16b91e': {
         id: 'e0c54c13f8a2480e90987e2faf16b91e',
         name: 'Camila & Tunde',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/39ea2131ffc24538bac93e298776c9f8'
     },
     'e14f9f2c08fe448197fd56ab5ff1f065': {
         id: 'e14f9f2c08fe448197fd56ab5ff1f065',
         name: 'Emma & Leanne',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/a6171aa5c18143b9a32b2291d36c800c'
     },
     'e2b47232c29844c380f0a5374317a3c9': {
@@ -242,11 +268,13 @@ export const instructors = {
     'e9e1c50f025a4b42b35e7df609fe2899': {
         id: 'e9e1c50f025a4b42b35e7df609fe2899',
         name: 'Ally & Cliff',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/de05c06ff4fa4d9e8e577dd9183beca9'
     },
     'f2375e0aba4f41cc8acb2b544fe45219': {
         id: 'f2375e0aba4f41cc8acb2b544fe45219',
         name: 'Multiple Instructors',
+        type: 'other',
         image_url: 'https://s3.amazonaws.com/workout-metric-images-prod/0b84fcb079254a86a40c1c2e4368f7a3'
     },
     'f6f2d613dc344e4bbf6428cd34697820': {

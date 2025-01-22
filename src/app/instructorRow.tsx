@@ -16,9 +16,11 @@ export default function InstructorRow() {
 		<div className={styles.instructorRow}>
             {/* TODO: Add instructor styles */}
 			{Object.entries(instructors).map(([id, instructor]) => (
-                <button key={id}>
-                    {instructor.name}
-                </button>
+				(instructor.type || 'single') !== 'other' && (
+					<button key={id}>
+						{instructor.name}
+					</button>
+				)
 			))}
 		</div>
 	);

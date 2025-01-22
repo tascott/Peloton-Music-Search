@@ -4,7 +4,7 @@ const nextConfig = {
         ignoreDuringBuilds: true,
     },
     images: {
-        domains: ['images.music.onepeloton.com'],
+        domains: ['images.music.onepeloton.com','images.amplified.com']
     },
 }
 
