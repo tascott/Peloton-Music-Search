@@ -6,6 +6,10 @@ import RideTimeRow from './rideTimeRow';
 import InstructorRow from './instructorRow';
 import styles from './search.module.css';
 
+type Workout = {
+	id: string;
+	duration: number;
+};
 
 type Song = {
 	workout_id: string;
@@ -33,6 +37,7 @@ export default function Search() {
 	const [songSearchTerm, setSongSearchTerm] = useState(''); // From the songs input
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
 	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
+	const [workouts, setWorkouts] = useState<Workout[]>([]);
 
 	const handleTimeSelection = (times: number[]) => {
 		// This function is passed from RideTimeRow
@@ -56,7 +61,6 @@ export default function Search() {
 				.from('songs')
 				.select('id, title, artist_names, workout_id, image_url');
 
-			// Each search term only looks in its own column
 			if (songSearchTerm) {
 				query = query.ilike('title', `%${songSearchTerm}%`);
 			}
@@ -68,6 +72,12 @@ export default function Search() {
 
 			if (error) throw error;
 			setSongs(data);
+
+			const workoutsData = data.map(song => ({
+				id: song.workout_id,
+				duration: 0  // We'll need to fetch this separately if needed
+			}));
+			setWorkouts(workoutsData);
 		} catch (error) {
 			console.error(error);
 		}
@@ -109,7 +119,11 @@ export default function Search() {
 			/>
 			<InstructorRow />
 			<div className={styles.songList}>
-				{songs?.map((song) => (
+				{songs?.filter(song => {
+					const workout = workouts.find(w => w.id === song.workout_id);
+					return selectedTimes.length === 0 ||
+						   (workout && selectedTimes.includes(workout.duration || 0));
+				}).map((song) => (
 					<SongDetail
 						key={song.id}
 						id={song.id}
