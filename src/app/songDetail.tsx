@@ -31,7 +31,8 @@ export default function SongDetail(props: SongDetailProps) {
 		const fetchWorkout = async () => {
 			const { data } = await supabase
 				.from('web_workouts')
-				.select(`
+				.select(
+					`
 					id,
 					title,
 					duration,
@@ -41,7 +42,8 @@ export default function SongDetail(props: SongDetailProps) {
 					fitness_discipline,
 					scheduled_time,
 					difficulty_rating_avg
-				`)
+				`
+				)
 				.eq('id', props.workout_id)
 				.single();
 
@@ -54,8 +56,8 @@ export default function SongDetail(props: SongDetailProps) {
 	// Determine if we should show the workout based on selected times (TODO: also add instructors, and difficulty rating)
 	const shouldShowWorkout =
 		workout &&
-		(props.selectedTimes.length === 0 || props.selectedTimes.includes(workout.duration || 0));
-
+		(props.selectedTimes.length === 0 ||
+			props.selectedTimes.includes(workout.duration || 0));
 	return (
 		<div>
 			{shouldShowWorkout && (

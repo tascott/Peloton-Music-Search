@@ -44,17 +44,6 @@ export default function Search() {
 		setSelectedTimes(times);
 	};
 
-	// Artists
-	// .from('songs')
-	// .select('id, title, artist_names, workout_id, image_url')
-	// .ilike('artist_names', `%${artistSearchTerm}%`)
-
-	// Songs
-	// .from('songs') // table name
-	// .select('id, title, artist_names, workout_id, image_url')
-	// .ilike('title', `%${searchTerm}%`)
-	// .limit(25);
-
 	const fetchSongList = async () => {
 		try {
 			let query = supabase
@@ -73,9 +62,9 @@ export default function Search() {
 			if (error) throw error;
 			setSongs(data);
 
-			const workoutsData = data.map(song => ({
+			const workoutsData = data.map((song) => ({
 				id: song.workout_id,
-				duration: 0  // We'll need to fetch this separately if needed
+				duration: 0, // We'll need to fetch this separately if needed
 			}));
 			setWorkouts(workoutsData);
 		} catch (error) {
@@ -119,20 +108,18 @@ export default function Search() {
 			/>
 			<InstructorRow />
 			<div className={styles.songList}>
-				{songs?.filter(song => {
-					const workout = workouts.find(w => w.id === song.workout_id);
-					return selectedTimes.length === 0 ||
-						   (workout && selectedTimes.includes(workout.duration || 0));
-				}).map((song) => (
-					<SongDetail
-						key={song.id}
-						id={song.id}
-						title={song.title}
-						artist_names={song.artist_names}
-						image_url={song.image_url}
-						workout_id={song.workout_id}
-						selectedTimes={selectedTimes}
-					/>
+				{songs.map((song) => (
+					<>
+						<SongDetail
+							key={song.id}
+							id={song.id}
+							title={song.title}
+							artist_names={song.artist_names}
+							image_url={song.image_url}
+							workout_id={song.workout_id}
+							selectedTimes={selectedTimes}
+						/>
+					</>
 				))}
 			</div>
 		</div>
