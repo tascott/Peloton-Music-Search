@@ -40,9 +40,9 @@ export default function Search() {
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
 	const [isInstructorsExpanded, setIsInstructorsExpanded] = useState(false);
+	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
 
 	const handleTimeSelection = (times: number[]) => {
-		// This function is passed from RideTimeRow
 		setSelectedTimes(times);
 	};
 
@@ -52,6 +52,10 @@ export default function Search() {
 
 	const toggleInstructors = () => {
 		setIsInstructorsExpanded(!isInstructorsExpanded);
+	};
+
+	const toggleTimes = () => {
+		setIsTimesExpanded(!isTimesExpanded);
 	};
 
 	const fetchSongList = async () => {
@@ -98,7 +102,19 @@ export default function Search() {
 				Fetch
 			</button>
 
-			<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+			<button
+				className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
+				onClick={toggleTimes}
+			>
+				Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+					<path d="M6 9l6 6 6-6"/>
+				</svg>
+			</button>
+
+			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
+				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+			</div>
 
 			<button
 				className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${selectedInstructors.length > 0 ? styles.active : ''}`}

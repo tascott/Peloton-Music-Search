@@ -1,6 +1,7 @@
 'use client';
 // import { useState } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
+import { instructors } from '@/data/instructors';
 import styles from './workout.module.css';
 
 type WorkoutSong = {
@@ -35,15 +36,21 @@ export default function Workout(props: { workout: WorkoutType; songData: Workout
 		<>
 			{songData && (
 				<div className={styles.workoutCard}>
+					<h3 className={styles.title}>{workout.title}</h3>
+					<p style={{color: 'black'}}>{instructors[workout.instructor_id].name}</p>
 					<div className={styles.songInfo}>
-						<Image src={songData.image_url} alt={`${songData.title} cover`} width={60} height={60} className={styles.songImage} />
+						{/* <Image src={songData.image_url} alt={`${songData.title} cover`} width={60} height={60} className={styles.songImage} /> */}
 						<div>
-							<p className={styles.songTitle}>{songData.title}</p>
-							<p className={styles.songArtist}>{songData.artist}</p>
+							<p className={styles.songTitle}>
+								{songData.title} - {songData.artist}
+								<span className={styles.songArtist}></span>
+							</p>
 						</div>
 					</div>
-					<h3 className={styles.title}>{workout.title}</h3>
-					<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
+					<button
+						className={styles.button}
+						onClick={() => window.open(workoutLink, '_blank')}
+					>
 						View on Peloton
 					</button>
 				</div>
