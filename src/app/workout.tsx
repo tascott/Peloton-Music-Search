@@ -1,6 +1,4 @@
 'use client';
-// import { useState } from 'react';
-// import Image from 'next/image';
 import { instructors } from '@/data/instructors';
 import styles from './workout.module.css';
 
@@ -37,7 +35,7 @@ export default function Workout(props: { workout: WorkoutType; songData: Workout
 			{songData && (
 				<div className={styles.workoutCard}>
 					<h3 className={styles.title}>{workout.title}</h3>
-					<p style={{color: 'black'}}>{instructors[workout.instructor_id].name}</p>
+					<p className={styles.instructor}>{workout.instructor_id && instructors[workout.instructor_id]?.name}</p>
 					<div className={styles.songInfo}>
 						{/* <Image src={songData.image_url} alt={`${songData.title} cover`} width={60} height={60} className={styles.songImage} /> */}
 						<div>

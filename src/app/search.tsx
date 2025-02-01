@@ -69,7 +69,7 @@ export default function Search() {
 				query = query.ilike('artist_names', `%${artistSearchTerm}%`);
 			}
 
-			const { data, error } = await query.limit(25);
+			const { data, error } = await query.limit(50);
 
 			if (error) throw error;
 			setSongs(data);
