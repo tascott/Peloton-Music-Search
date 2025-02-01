@@ -104,7 +104,7 @@ export default function Search() {
 				{songs.map((song) => (
 					<>
 						<SongDetail
-							key={song.id}
+							key={song.id + song.workout_id}
 							id={song.id}
 							title={song.title}
 							artist_names={song.artist_names}
