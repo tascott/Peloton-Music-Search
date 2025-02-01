@@ -33,8 +33,7 @@ export default function SongDetail(props: SongDetailProps) {
 			const { data } = await supabase
 				.from('web_workouts')
 				.select(
-					`
-					id,
+					`id,
 					title,
 					duration,
 					image_url,
@@ -42,9 +41,7 @@ export default function SongDetail(props: SongDetailProps) {
 					description,
 					fitness_discipline,
 					scheduled_time,
-					difficulty_rating_avg
-				`
-				)
+					difficulty_rating_avg`)
 				.eq('id', props.workout_id)
 				.single();
 

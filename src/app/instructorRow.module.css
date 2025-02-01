@@ -1,8 +1,9 @@
 .instructorRow {
     display: flex;
-    gap: 8px;
-    margin: 16px 0;
+    gap: 6px;
+    margin: 12px 0;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .instructor {
@@ -38,27 +39,29 @@
 }
 
 .instructorButton {
-    padding: 8px 16px;
+    padding: 6px 12px;
     border: 1px solid #ccc;
-    border-radius: 20px;
+    border-radius: 16px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
     color: #333;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 .instructorButtonSelected {
-    padding: 8px 16px;
+    padding: 6px 12px;
     border: 1px solid #2089dc;
-    border-radius: 20px;
+    border-radius: 16px;
     background: #2089dc;
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     box-shadow: 0 2px 4px rgba(32, 137, 220, 0.2);
+    white-space: nowrap;
 }
 
 .instructorButton:hover {
@@ -70,4 +73,17 @@
 
 .instructorButton:active {
     transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+    .instructorRow {
+        gap: 8px;
+        margin: 16px 0;
+    }
+
+    .instructorButton,
+    .instructorButtonSelected {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
 }
