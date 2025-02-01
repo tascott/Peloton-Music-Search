@@ -96,8 +96,22 @@ export default function Search() {
 	return (
 		<div className={styles.searchContainer}>
 			<h1 className={styles.title}>Peloton Music Search</h1>
-			<input type="text" placeholder="Search songs" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
-			<input type="text" placeholder="Search artists" param-type="artist" onChange={handleAddToSearch} className={styles.searchInput} />
+			<div className={styles.searchInputWrapper}>
+				<input
+					type="text"
+					placeholder="Search songs"
+					param-type="song"
+					onChange={handleAddToSearch}
+					className={styles.searchInput}
+				/>
+				<input
+					type="text"
+					placeholder="Search artists"
+					param-type="artist"
+					onChange={handleAddToSearch}
+					className={styles.searchInput}
+				/>
+			</div>
 			<button onClick={fetchSongList} className={styles.fetchButton}>
 				Fetch
 			</button>
