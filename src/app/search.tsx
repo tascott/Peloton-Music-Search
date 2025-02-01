@@ -38,17 +38,19 @@ export default function Search() {
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
 	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
-
+	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
 	const handleTimeSelection = (times: number[]) => {
 		// This function is passed from RideTimeRow
 		setSelectedTimes(times);
 	};
 
+	const handleInstructorSelection = (instructors: string[]) => {
+		setSelectedInstructors(instructors);
+	};
+
 	const fetchSongList = async () => {
 		try {
-			let query = supabase
-				.from('songs')
-				.select('id, title, artist_names, workout_id, image_url');
+			let query = supabase.from('songs').select('id, title, artist_names, workout_id, image_url');
 
 			if (songSearchTerm) {
 				query = query.ilike('title', `%${songSearchTerm}%`);
@@ -84,29 +86,16 @@ export default function Search() {
 	return (
 		<div className={styles.searchContainer}>
 			<h1 className={styles.title}>Peloton Music Search</h1>
-			<input
-				type="text"
-				placeholder="Search songs"
-				param-type="song"
-				onChange={handleAddToSearch}
-				className={styles.searchInput}
-			/>
-			<input
-				type="text"
-				placeholder="Search artists"
-				param-type="artist"
-				onChange={handleAddToSearch}
-				className={styles.searchInput}
-			/>
+			<input type="text" placeholder="Search songs" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
+			<input type="text" placeholder="Search artists" param-type="artist" onChange={handleAddToSearch} className={styles.searchInput} />
 			<button onClick={fetchSongList} className={styles.fetchButton}>
 				Fetch
 			</button>
-			<RideTimeRow
-				rideTimes={rideTimes}
-				selectedTimes={selectedTimes}
-				onTimeSelect={handleTimeSelection}
-			/>
-			<InstructorRow />
+
+			<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+
+			<InstructorRow selectedInstructors={selectedInstructors} onInstructorsSelect={handleInstructorSelection} />
+
 			<div className={styles.songList}>
 				{songs.map((song) => (
 					<>
@@ -118,6 +107,7 @@ export default function Search() {
 							image_url={song.image_url}
 							workout_id={song.workout_id}
 							selectedTimes={selectedTimes}
+							selectedInstructors={selectedInstructors}
 						/>
 					</>
 				))}

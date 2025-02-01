@@ -1,13 +1,8 @@
 .instructorRow {
     display: flex;
-    gap: 12px;
-    padding: 16px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    margin: 16px 0;
     flex-wrap: wrap;
-    justify-content: center;
-    max-width: 100%;
-    margin: 0 auto;
 }
 
 .instructor {
@@ -40,4 +35,39 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.instructorButton {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.instructorButtonSelected {
+    padding: 8px 16px;
+    border: 1px solid #2089dc;
+    border-radius: 20px;
+    background: #2089dc;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(32, 137, 220, 0.2);
+}
+
+.instructorButton:hover {
+    background: #f5f5f5;
+    border-color: #2089dc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.instructorButton:active {
+    transform: translateY(0);
 }

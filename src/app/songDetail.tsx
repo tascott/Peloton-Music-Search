@@ -10,6 +10,7 @@ interface SongDetailProps {
 	image_url: string;
 	workout_id: string;
 	selectedTimes: number[];
+	selectedInstructors: string[];
 }
 
 type WorkoutType = {
@@ -54,12 +55,9 @@ export default function SongDetail(props: SongDetailProps) {
 	}, [props.workout_id]); // Update when workout_id changes, i.e. when a new song is added
 
 	// Determine if we should show the workout based on selected times (TODO: also add instructors, and difficulty rating)
-	const shouldShowWorkout =
-		workout &&
-		(props.selectedTimes.length === 0 ||
-			props.selectedTimes.includes(workout.duration || 0));
+	const shouldShowWorkout = workout && (props.selectedTimes.length === 0 || props.selectedTimes.includes(workout.duration || 0));
 	return (
-		<div>
+		<>
 			{shouldShowWorkout && (
 				<Workout
 					workout={workout}
@@ -70,6 +68,6 @@ export default function SongDetail(props: SongDetailProps) {
 					}}
 				/>
 			)}
-		</div>
+		</>
 	);
 }
