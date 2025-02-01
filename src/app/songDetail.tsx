@@ -54,11 +54,13 @@ export default function SongDetail(props: SongDetailProps) {
 		fetchWorkout();
 	}, [props.workout_id]); // Update when workout_id changes, i.e. when a new song is added
 
-	// Determine if we should show the workout based on selected times (TODO: also add instructors, and difficulty rating)
+	// Determine if we should show the workout based on selected times (TODO: combine, and add difficulty rating)
 	const shouldShowWorkout = workout && (props.selectedTimes.length === 0 || props.selectedTimes.includes(workout.duration || 0));
+	const shouldShowInstructor = props.selectedInstructors.length === 0 || props.selectedInstructors.includes(workout?.instructor_id || '');
+	const shouldShowCombined = shouldShowWorkout && shouldShowInstructor;
 	return (
 		<>
-			{shouldShowWorkout && (
+			{shouldShowCombined && (
 				<Workout
 					workout={workout}
 					songData={{

@@ -46,6 +46,8 @@ export default function Workout(props: { workout: WorkoutType; songData: Workout
 					<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
 						View on Peloton
 					</button>
+					<p style={{ color: 'black' }}>{workout.instructor_id}</p>
+					<p></p>
 				</div>
 			)}
 		</>

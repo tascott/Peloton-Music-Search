@@ -94,7 +94,11 @@ export default function Search() {
 
 			<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
 
-			<InstructorRow selectedInstructors={selectedInstructors} onInstructorsSelect={handleInstructorSelection} />
+			<InstructorRow
+				key={selectedInstructors.join(',')}
+				selectedInstructors={selectedInstructors}
+				onInstructorsSelect={handleInstructorSelection}
+			/>
 
 			<div className={styles.songList}>
 				{songs.map((song) => (
