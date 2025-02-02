@@ -37,7 +37,7 @@ export default function Search() {
 	const [songSearchTerm, setSongSearchTerm] = useState(''); // From the songs input
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
 	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
-	const [workouts, setWorkouts] = useState<Workout[]>([]);
+	// const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
 	const [isInstructorsExpanded, setIsInstructorsExpanded] = useState(false);
 	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
@@ -60,7 +60,26 @@ export default function Search() {
 
 	const fetchSongList = async () => {
 		try {
-			let query = supabase.from('songs').select('id, title, artist_names, workout_id, image_url');
+			let query = supabase.from('songs').select(`
+                id,
+                title,
+                artist_names,
+                workout_id,
+                image_url,
+                workout_details: web_workouts!inner (
+                    id,
+                    title,
+                    duration,
+                    image_url,
+                    instructor_id,
+                    description,
+                    fitness_discipline,
+                    scheduled_time,
+                    difficulty_rating_avg
+                )
+            `);
+
+			// Note above, had to change the primary key in supabase console to so it knows it can join the tables. Here I am also renaming the column web_workouts to workout_details
 
 			if (songSearchTerm) {
 				query = query.ilike('title', `%${songSearchTerm}%`);
@@ -73,12 +92,7 @@ export default function Search() {
 
 			if (error) throw error;
 			setSongs(data);
-
-			const workoutsData = data.map((song) => ({
-				id: song.workout_id,
-				duration: 0, // We'll need to fetch this separately if needed
-			}));
-			setWorkouts(workoutsData);
+			console.log('songs', data);
 		} catch (error) {
 			console.error(error);
 		}
