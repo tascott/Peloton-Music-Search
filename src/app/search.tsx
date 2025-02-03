@@ -22,7 +22,7 @@ type Song = {
 		fitness_discipline?: string;
 		scheduled_time?: string;
 		difficulty_rating_avg?: number;
-	}[];
+	};
 };
 
 const rideTimes = {
@@ -114,10 +114,21 @@ export default function Search() {
 	};
 
 	const shouldShowIfInstructorPresent = (song: Song) => {
-		if (selectedInstructors.length > 0) {
-			return song.workout_details.some((workout) => selectedInstructors.includes(workout.instructor_id));
+		if (selectedInstructors.length > 0 && song.workout_details?.instructor_id) {
+			return selectedInstructors.includes(song.workout_details.instructor_id);
 		}
 		return true;
+	};
+
+	const shouldShowIfTimePresent = (song: Song) => {
+		if (selectedTimes.length > 0 && song.workout_details?.duration) {
+			return selectedTimes.includes(song.workout_details.duration);
+		}
+		return true;
+	};
+
+	const shouldShowIfTimeAndInstructorPresent = (song: Song) => {
+		return shouldShowIfInstructorPresent(song) && shouldShowIfTimePresent(song);
 	};
 
 	return (
@@ -144,30 +155,61 @@ export default function Search() {
 			</button>
 
 			<button
-				className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
+				className={`${styles.toggleButton} ${
+					isTimesExpanded ? styles.expanded : ''
+				} ${selectedTimes.length > 0 ? styles.active : ''}`}
 				onClick={toggleTimes}
 			>
-				Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-					<path d="M6 9l6 6 6-6"/>
+				Duration{' '}
+				{selectedTimes.length > 0 && `(${selectedTimes.length})`}
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+				>
+					<path d="M6 9l6 6 6-6" />
 				</svg>
 			</button>
 
-			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
-				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+			<div
+				className={`${styles.timeContainer} ${
+					isTimesExpanded ? styles.expanded : ''
+				}`}
+			>
+				<RideTimeRow
+					rideTimes={rideTimes}
+					selectedTimes={selectedTimes}
+					onTimeSelect={handleTimeSelection}
+				/>
 			</div>
 
 			<button
-				className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${selectedInstructors.length > 0 ? styles.active : ''}`}
+				className={`${styles.toggleButton} ${
+					isInstructorsExpanded ? styles.expanded : ''
+				} ${selectedInstructors.length > 0 ? styles.active : ''}`}
 				onClick={toggleInstructors}
 			>
-				Instructors {selectedInstructors.length > 0 && `(${selectedInstructors.length})`}
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-					<path d="M6 9l6 6 6-6"/>
+				Instructors{' '}
+				{selectedInstructors.length > 0 &&
+					`(${selectedInstructors.length})`}
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+				>
+					<path d="M6 9l6 6 6-6" />
 				</svg>
 			</button>
 
-			<div className={`${styles.instructorContainer} ${isInstructorsExpanded ? styles.expanded : ''}`}>
+			<div
+				className={`${styles.instructorContainer} ${
+					isInstructorsExpanded ? styles.expanded : ''
+				}`}
+			>
 				<InstructorRow
 					key={selectedInstructors.join(',')}
 					selectedInstructors={selectedInstructors}
@@ -177,19 +219,20 @@ export default function Search() {
 
 
 			<div className={styles.songList}>
-				{songs.map((song) => (
-					shouldShowIfInstructorPresent(song) && (
-						<Workout
-							key={song.id + song.workout_id}
-							workout_details={song.workout_details}
-							songData={{
-							title: song.title,
-							artist: song.artist_names,
-							image_url: song.image_url
-						}}
-						/>
-					)
-				))}
+				{songs.map(
+					(song) =>
+						shouldShowIfTimeAndInstructorPresent(song) && (
+							<Workout
+								key={song.id + song.workout_id}
+								workout_details={song.workout_details}
+								songData={{
+									title: song.title,
+									artist: song.artist_names,
+									image_url: song.image_url,
+								}}
+							/>
+						)
+				)}
 			</div>
 		</div>
 	);
