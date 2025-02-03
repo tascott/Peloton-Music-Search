@@ -1,16 +1,16 @@
 'use client';
 import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/supabase';
-import SongDetail from './songDetail';
+import Workout from './workout';
 import RideTimeRow from './rideTimeRow';
 import InstructorRow from './instructorRow';
 import styles from './search.module.css';
 
 type Song = {
-	workout_id: string;
 	id: number;
 	title: string;
 	artist_names: string;
+	workout_id: string;
 	image_url: string;
 	workout_details: {
 		id: string;
@@ -43,7 +43,6 @@ export default function Search() {
 	const [songSearchTerm, setSongSearchTerm] = useState(''); // From the songs input
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
 	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
-	// const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
 	const [isInstructorsExpanded, setIsInstructorsExpanded] = useState(false);
 	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
@@ -53,6 +52,7 @@ export default function Search() {
 	};
 
 	const handleInstructorSelection = (instructors: string[]) => {
+		console.log('instructors', instructors);
 		setSelectedInstructors(instructors);
 	};
 
@@ -98,7 +98,7 @@ export default function Search() {
 
 			if (error) throw error;
 			setSongs(data);
-			console.log('songs', data);
+
 		} catch (error) {
 			console.error(error);
 		}
@@ -111,6 +111,13 @@ export default function Search() {
 		} else {
 			setSongSearchTerm(e.target.value);
 		}
+	};
+
+	const shouldShowIfInstructorPresent = (song: Song) => {
+		if (selectedInstructors.length > 0) {
+			return song.workout_details.some((workout) => selectedInstructors.includes(workout.instructor_id));
+		}
+		return true;
 	};
 
 	return (
@@ -168,19 +175,20 @@ export default function Search() {
 				/>
 			</div>
 
+
 			<div className={styles.songList}>
 				{songs.map((song) => (
-					<SongDetail
-						key={song.id + song.workout_id}
-						id={song.id}
-						title={song.title}
-						artist_names={song.artist_names}
-						image_url={song.image_url}
-						workout_id={song.workout_id}
-						selectedTimes={selectedTimes}
-						selectedInstructors={selectedInstructors}
-						workout_details={song.workout_details}
-					/>
+					shouldShowIfInstructorPresent(song) && (
+						<Workout
+							key={song.id + song.workout_id}
+							workout_details={song.workout_details}
+							songData={{
+							title: song.title,
+							artist: song.artist_names,
+							image_url: song.image_url
+						}}
+						/>
+					)
 				))}
 			</div>
 		</div>
