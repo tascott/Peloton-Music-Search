@@ -21,23 +21,23 @@ type WorkoutType = {
 	song?: WorkoutSong;
 };
 
-export default function Workout(props: { workout: WorkoutType; songData: WorkoutSong }) {
-	const { workout, songData } = props;
-	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout.id}`;
-
-	// const convertToMinutes = (duration: number) => {
-	// 	const minutes = Math.floor(duration / 60);
-	// 	return `${minutes}mins`;
-	// };
+export default function Workout(props: {
+	workout_details: WorkoutType;
+	songData: WorkoutSong;
+}) {
+	const { workout_details, songData } = props;
+	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout_details.id}`;
 
 	return (
 		<>
 			{songData && (
 				<div className={styles.workoutCard}>
-					<h3 className={styles.title}>{workout.title}</h3>
-					<p className={styles.instructor}>{workout.instructor_id && instructors[workout.instructor_id]?.name}</p>
+					<h3 className={styles.title}>{workout_details.title}</h3>
+					<p className={styles.instructor}>
+						{workout_details.instructor_id &&
+							instructors[workout_details.instructor_id]?.name}
+					</p>
 					<div className={styles.songInfo}>
-						{/* <Image src={songData.image_url} alt={`${songData.title} cover`} width={60} height={60} className={styles.songImage} /> */}
 						<div>
 							<p className={styles.songTitle}>
 								{songData.title} - {songData.artist}

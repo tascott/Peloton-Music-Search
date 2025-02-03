@@ -6,17 +6,23 @@ import RideTimeRow from './rideTimeRow';
 import InstructorRow from './instructorRow';
 import styles from './search.module.css';
 
-type Workout = {
-	id: string;
-	duration: number;
-};
-
 type Song = {
 	workout_id: string;
 	id: number;
 	title: string;
 	artist_names: string;
 	image_url: string;
+	workout_details: {
+		id: string;
+		title: string;
+		duration?: number;
+		image_url?: string;
+		instructor_id?: string;
+		description?: string;
+		fitness_discipline?: string;
+		scheduled_time?: string;
+		difficulty_rating_avg?: number;
+	}[];
 };
 
 const rideTimes = {
@@ -173,6 +179,7 @@ export default function Search() {
 						workout_id={song.workout_id}
 						selectedTimes={selectedTimes}
 						selectedInstructors={selectedInstructors}
+						workout_details={song.workout_details}
 					/>
 				))}
 			</div>
