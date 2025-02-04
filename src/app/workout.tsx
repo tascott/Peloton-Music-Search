@@ -1,6 +1,7 @@
 'use client';
 import { instructors } from '@/data/instructors';
 import styles from './workout.module.css';
+import DifficultyColorPill from './difficultyColorPill';
 
 type WorkoutSong = {
 	title: string;
@@ -39,7 +40,9 @@ export default function Workout(props: { workout_details: WorkoutType; songData:
 							</p>
 						</div>
 					</div>
-					<p>Difficulty: {workout_details.difficulty_rating_avg?.toFixed(2)}</p>
+					{workout_details.difficulty_rating_avg && (
+						<DifficultyColorPill difficulty={workout_details.difficulty_rating_avg} />
+					)}
 					<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
 						View on Peloton
 					</button>
