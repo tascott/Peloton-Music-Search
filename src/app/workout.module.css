@@ -21,6 +21,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    min-height: 200px;
 }
 
 .workoutCard:hover {
@@ -106,7 +107,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 4px;
+    margin-top: auto;
     text-align: center;
 }
 

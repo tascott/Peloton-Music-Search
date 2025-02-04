@@ -174,32 +174,31 @@ export default function Search() {
 				</button>
 			</div>
 			<div className="">{totalFoundMessage}</div>
-			<div
-				title={songs.length > 0 ? 'Filter Songs' : 'No Soddngs Found'}
-				className={songs.length > 0 ? styles.filterButtonsContainer : styles.noSongsFound}
-			>
-				<button
-					className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
-					onClick={toggleTimes}
-				>
-					Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-						<path d="M6 9l6 6 6-6" />
-					</svg>
-				</button>
+			{hasSearched && (
+				<div className={styles.filterButtonsContainer}>
+					<button
+						className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
+						onClick={toggleTimes}
+					>
+						Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<path d="M6 9l6 6 6-6" />
+						</svg>
+					</button>
 
-				<button
-					className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${
-						selectedInstructors.length > 0 ? styles.active : ''
-					}`}
-					onClick={toggleInstructors}
-				>
-					Instructors {selectedInstructors.length > 0 && `(${selectedInstructors.length})`}
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-						<path d="M6 9l6 6 6-6" />
-					</svg>
-				</button>
-			</div>
+					<button
+						className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${
+							selectedInstructors.length > 0 ? styles.active : ''
+						}`}
+						onClick={toggleInstructors}
+					>
+						Instructors {selectedInstructors.length > 0 && `(${selectedInstructors.length})`}
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+							<path d="M6 9l6 6 6-6" />
+						</svg>
+					</button>
+				</div>
+			)}
 
 			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
 				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} activeTimes={activeTimes} />
