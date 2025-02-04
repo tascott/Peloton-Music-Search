@@ -17,7 +17,7 @@ type Song = {
 		title: string;
 		duration?: number;
 		image_url?: string;
-		instructor_id?: string;
+		instructor_id: string;
 		description?: string;
 		fitness_discipline?: string;
 		scheduled_time?: string;
@@ -106,11 +106,12 @@ export default function Search() {
 			const { data, error } = await query.limit(limit);
 
 			if (error) throw error;
-			const uniqueInstructors = [...new Set(data.map((song) => song.workout_details?.instructor_id))];
-			setActiveInstructors(uniqueInstructors);
-			const uniqueTimes = [...new Set(data.map((song) => song.workout_details?.duration))].filter(Boolean) as number[];
+			const typedData = data as unknown as Song[];
+			const uniqueInstructors = [...new Set(typedData.map((song) => song.workout_details.instructor_id))];
+			setActiveInstructors(uniqueInstructors.filter(Boolean));
+			const uniqueTimes = [...new Set(typedData.map((song) => song.workout_details.duration))].filter(Boolean) as number[];
 			setActiveTimes(uniqueTimes);
-			setSongs(data);
+			setSongs(typedData);
 			setHasSearched(true);
 		} catch (error) {
 			console.error(error);
