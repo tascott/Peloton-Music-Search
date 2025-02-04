@@ -5,9 +5,10 @@ import { instructors } from '@/data/instructors';
 type InstructorRowProps = {
 	onInstructorsSelect: (instructors: string[]) => void;
 	selectedInstructors: string[];
+	activeInstructors: string[];
 };
 
-export default function InstructorRow({ onInstructorsSelect, selectedInstructors }: InstructorRowProps) {
+export default function InstructorRow({ onInstructorsSelect, selectedInstructors, activeInstructors }: InstructorRowProps) {
 	const handleInstructorClick = (instructorID: string) => {
 		onInstructorsSelect(
 			selectedInstructors.includes(instructorID)
@@ -20,7 +21,9 @@ export default function InstructorRow({ onInstructorsSelect, selectedInstructors
 		<div className={styles.instructorRow}>
 			{Object.entries(instructors).map(
 				([id, instructor]) =>
-					(instructor.type || 'single') !== 'other' && (
+					(instructor.type || 'single') !== 'other' &&
+					(selectedInstructors.length === 0 || selectedInstructors.includes(instructor.id)) &&
+					(activeInstructors.length === 0 || activeInstructors.includes(instructor.id)) && (
 						<button
 							key={id}
 							className={selectedInstructors.includes(instructor.id) ? styles.instructorButtonSelected : styles.instructorButton}

@@ -44,8 +44,10 @@ export default function Search() {
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
 	const [selectedTimes, setSelectedTimes] = useState<number[]>([]); // From RideTimeRow
 	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
+	const [activeInstructors, setActiveInstructors] = useState<string[]>([]);
 	const [isInstructorsExpanded, setIsInstructorsExpanded] = useState(false);
 	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
+	const [hasSearched, setHasSearched] = useState(false);
 	const limit = 100;
 
 	const handleTimeSelection = (times: number[]) => {
@@ -103,7 +105,10 @@ export default function Search() {
 			const { data, error } = await query.limit(limit);
 
 			if (error) throw error;
+			const uniqueInstructors = [...new Set(data.map((song) => song.workout_details?.instructor_id))];
+			setActiveInstructors(uniqueInstructors);
 			setSongs(data);
+			setHasSearched(true);
 		} catch (error) {
 			console.error(error);
 		}
@@ -201,6 +206,7 @@ export default function Search() {
 					key={selectedInstructors.join(',')}
 					selectedInstructors={selectedInstructors}
 					onInstructorsSelect={handleInstructorSelection}
+					activeInstructors={activeInstructors}
 				/>
 			</div>
 
@@ -220,7 +226,7 @@ export default function Search() {
 						)
 				)}
 			</div>
-			{filteredSongs.length === 0 && (
+			{filteredSongs.length === 0 && hasSearched && (
 				<div className={styles.noResults}>
 					<p>No results found</p>
 				</div>
