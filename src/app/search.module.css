@@ -9,20 +9,21 @@
     align-items: center;
 }
 
-.searchContainer > * {
+.searchContainer>* {
     margin-bottom: 32px;
 }
 
-.searchContainer > *:last-child {
+.searchContainer>*:last-child {
     margin-bottom: 0;
 }
 
 .searchInputWrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
-    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .searchInput {
@@ -57,6 +58,7 @@
     transition: all 0.3s ease;
     width: calc(100% - 32px);
     max-width: 200px;
+    align-self: center;
 }
 
 .fetchButton:hover {
@@ -132,7 +134,8 @@
     transform: rotate(180deg);
 }
 
-.instructorContainer, .timeContainer {
+.instructorContainer,
+.timeContainer {
     width: 100%;
     overflow: hidden;
     max-height: 0;
@@ -144,7 +147,8 @@
     pointer-events: none;
 }
 
-.instructorContainer.expanded, .timeContainer.expanded {
+.instructorContainer.expanded,
+.timeContainer.expanded {
     max-height: 1000px;
     opacity: 1;
     padding: 24px 0;
@@ -152,24 +156,32 @@
     margin-bottom: 32px !important;
 }
 
+.filterButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+    width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+}
+
 @media (min-width: 768px) {
     .searchContainer {
         padding: 64px;
     }
 
-    .searchContainer > * {
+    .searchContainer>* {
         margin-bottom: 12px;
     }
 
     .searchInputWrapper {
         flex-direction: row;
-        gap: 24px;
-        max-width: 1000px;
-        justify-content: center;
+        align-items: center;
+        gap: 16px;
     }
 
     .searchInput {
-        max-width: 400px;
+        flex: 1;
     }
 
     .title {
@@ -178,5 +190,17 @@
 
     .songList {
         gap: 24px;
+    }
+
+    /* Put duration and instructor buttons on same line */
+    .toggleButton {
+        width: calc(50% - 8px);
+        /* subtracting half the gap */
+        display: inline-flex;
+    }
+
+    /* Container for the toggle buttons */
+    .toggleButton+.toggleButton {
+        margin-left: 16px;
     }
 }

@@ -52,16 +52,21 @@ export default function Search() {
 	};
 
 	const handleInstructorSelection = (instructors: string[]) => {
-		console.log('instructors', instructors);
 		setSelectedInstructors(instructors);
 	};
 
 	const toggleInstructors = () => {
 		setIsInstructorsExpanded(!isInstructorsExpanded);
+		if (isTimesExpanded) {
+			setIsTimesExpanded(false);
+		}
 	};
 
 	const toggleTimes = () => {
 		setIsTimesExpanded(!isTimesExpanded);
+		if (isInstructorsExpanded) {
+			setIsInstructorsExpanded(false);
+		}
 	};
 
 	const fetchSongList = async () => {
@@ -98,7 +103,6 @@ export default function Search() {
 
 			if (error) throw error;
 			setSongs(data);
-
 		} catch (error) {
 			console.error(error);
 		}
@@ -135,88 +139,47 @@ export default function Search() {
 		<div className={styles.searchContainer}>
 			<h1 className={styles.title}>Peloton Music Search</h1>
 			<div className={styles.searchInputWrapper}>
-				<input
-					type="text"
-					placeholder="Search songs"
-					param-type="song"
-					onChange={handleAddToSearch}
-					className={styles.searchInput}
-				/>
-				<input
-					type="text"
-					placeholder="Search artists"
-					param-type="artist"
-					onChange={handleAddToSearch}
-					className={styles.searchInput}
-				/>
+				<input type="text" placeholder="Search songs" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
+				<input type="text" placeholder="Search artists" param-type="artist" onChange={handleAddToSearch} className={styles.searchInput} />
+				<button onClick={fetchSongList} className={styles.fetchButton}>
+					Fetch
+				</button>
 			</div>
-			<button onClick={fetchSongList} className={styles.fetchButton}>
-				Fetch
-			</button>
-
-			<button
-				className={`${styles.toggleButton} ${
-					isTimesExpanded ? styles.expanded : ''
-				} ${selectedTimes.length > 0 ? styles.active : ''}`}
-				onClick={toggleTimes}
-			>
-				Duration{' '}
-				{selectedTimes.length > 0 && `(${selectedTimes.length})`}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
+			<div className={styles.filterButtonsContainer}>
+				<button
+					className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
+					onClick={toggleTimes}
 				>
-					<path d="M6 9l6 6 6-6" />
-				</svg>
-			</button>
+					Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+						<path d="M6 9l6 6 6-6" />
+					</svg>
+				</button>
 
-			<div
-				className={`${styles.timeContainer} ${
-					isTimesExpanded ? styles.expanded : ''
-				}`}
-			>
-				<RideTimeRow
-					rideTimes={rideTimes}
-					selectedTimes={selectedTimes}
-					onTimeSelect={handleTimeSelection}
-				/>
+				<button
+					className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${
+						selectedInstructors.length > 0 ? styles.active : ''
+					}`}
+					onClick={toggleInstructors}
+				>
+					Instructors {selectedInstructors.length > 0 && `(${selectedInstructors.length})`}
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+						<path d="M6 9l6 6 6-6" />
+					</svg>
+				</button>
 			</div>
 
-			<button
-				className={`${styles.toggleButton} ${
-					isInstructorsExpanded ? styles.expanded : ''
-				} ${selectedInstructors.length > 0 ? styles.active : ''}`}
-				onClick={toggleInstructors}
-			>
-				Instructors{' '}
-				{selectedInstructors.length > 0 &&
-					`(${selectedInstructors.length})`}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
-				>
-					<path d="M6 9l6 6 6-6" />
-				</svg>
-			</button>
+			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
+				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+			</div>
 
-			<div
-				className={`${styles.instructorContainer} ${
-					isInstructorsExpanded ? styles.expanded : ''
-				}`}
-			>
+			<div className={`${styles.instructorContainer} ${isInstructorsExpanded ? styles.expanded : ''}`}>
 				<InstructorRow
 					key={selectedInstructors.join(',')}
 					selectedInstructors={selectedInstructors}
 					onInstructorsSelect={handleInstructorSelection}
 				/>
 			</div>
-
 
 			<div className={styles.songList}>
 				{songs.map(
