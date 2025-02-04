@@ -21,10 +21,7 @@ type WorkoutType = {
 	song?: WorkoutSong;
 };
 
-export default function Workout(props: {
-	workout_details: WorkoutType;
-	songData: WorkoutSong;
-}) {
+export default function Workout(props: { workout_details: WorkoutType; songData: WorkoutSong }) {
 	const { workout_details, songData } = props;
 	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout_details.id}`;
 
@@ -33,10 +30,7 @@ export default function Workout(props: {
 			{songData && (
 				<div className={styles.workoutCard}>
 					<h3 className={styles.title}>{workout_details.title}</h3>
-					<p className={styles.instructor}>
-						{workout_details.instructor_id &&
-							instructors[workout_details.instructor_id]?.name}
-					</p>
+					<p className={styles.instructor}>{workout_details.instructor_id && instructors[workout_details.instructor_id]?.name}</p>
 					<div className={styles.songInfo}>
 						<div>
 							<p className={styles.songTitle}>
@@ -45,10 +39,8 @@ export default function Workout(props: {
 							</p>
 						</div>
 					</div>
-					<button
-						className={styles.button}
-						onClick={() => window.open(workoutLink, '_blank')}
-					>
+					<p>Difficulty: {workout_details.difficulty_rating_avg?.toFixed(2)}</p>
+					<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
 						View on Peloton
 					</button>
 				</div>

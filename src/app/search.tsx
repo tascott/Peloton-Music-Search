@@ -1,5 +1,5 @@
 'use client';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import Workout from './workout';
 import RideTimeRow from './rideTimeRow';
@@ -46,6 +46,7 @@ export default function Search() {
 	const [selectedInstructors, setSelectedInstructors] = useState<string[]>([]);
 	const [isInstructorsExpanded, setIsInstructorsExpanded] = useState(false);
 	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
+	const limit = 100;
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -99,7 +100,7 @@ export default function Search() {
 				query = query.ilike('artist_names', `%${artistSearchTerm}%`);
 			}
 
-			const { data, error } = await query.limit(50);
+			const { data, error } = await query.limit(limit);
 
 			if (error) throw error;
 			setSongs(data);
@@ -135,17 +136,39 @@ export default function Search() {
 		return shouldShowIfInstructorPresent(song) && shouldShowIfTimePresent(song);
 	};
 
+	const filteredSongs = songs.filter((song) => shouldShowIfInstructorPresent(song) && shouldShowIfTimePresent(song));
+
+	const totalFoundMessage = useMemo(() => {
+		if (filteredSongs.length === 0) {
+			return '';
+		} else if (filteredSongs.length < limit) {
+			return `Filtering ${filteredSongs.length} of ${songs.length} songs`;
+		} else {
+			return `${filteredSongs.length}+ songs found`;
+		}
+	}, [filteredSongs.length, songs.length]);
+
 	return (
 		<div className={styles.searchContainer}>
 			<h1 className={styles.title}>Peloton Music Search</h1>
 			<div className={styles.searchInputWrapper}>
-				<input type="text" placeholder="Search songs" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
-				<input type="text" placeholder="Search artists" param-type="artist" onChange={handleAddToSearch} className={styles.searchInput} />
+				<input type="text" placeholder="e.g. Not Like Us" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
+				<input
+					type="text"
+					placeholder="e.g. Kendrick Lamar"
+					param-type="artist"
+					onChange={handleAddToSearch}
+					className={styles.searchInput}
+				/>
 				<button onClick={fetchSongList} className={styles.fetchButton}>
-					Fetch
+					Search
 				</button>
 			</div>
-			<div className={styles.filterButtonsContainer}>
+			<div className="">{totalFoundMessage}</div>
+			<div
+				title={songs.length > 0 ? 'Filter Songs' : 'No Soddngs Found'}
+				className={songs.length > 0 ? styles.filterButtonsContainer : styles.noSongsFound}
+			>
 				<button
 					className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
 					onClick={toggleTimes}
@@ -197,6 +220,11 @@ export default function Search() {
 						)
 				)}
 			</div>
+			{filteredSongs.length === 0 && (
+				<div className={styles.noResults}>
+					<p>No results found</p>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -74,6 +74,22 @@
     width: calc(100% - 32px);
 }
 
+.noResults {
+    width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+    pointer-events: none;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--foreground);
+    width: 100%;
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+
 .title {
     font-family: var(--font-serif);
     font-size: 4rem;
@@ -163,6 +179,17 @@
     width: 100%;
     margin: 0 auto;
     justify-content: center;
+}
+
+.noSongsFound {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+    width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 @media (min-width: 768px) {
