@@ -49,6 +49,7 @@ export default function Search() {
 	const [isTimesExpanded, setIsTimesExpanded] = useState(false);
 	const [hasSearched, setHasSearched] = useState(false);
 	const limit = 100;
+	const [activeTimes, setActiveTimes] = useState<number[]>([]);
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -107,6 +108,8 @@ export default function Search() {
 			if (error) throw error;
 			const uniqueInstructors = [...new Set(data.map((song) => song.workout_details?.instructor_id))];
 			setActiveInstructors(uniqueInstructors);
+			const uniqueTimes = [...new Set(data.map((song) => song.workout_details?.duration))].filter(Boolean) as number[];
+			setActiveTimes(uniqueTimes);
 			setSongs(data);
 			setHasSearched(true);
 		} catch (error) {
@@ -198,7 +201,7 @@ export default function Search() {
 			</div>
 
 			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
-				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} />
+				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} activeTimes={activeTimes} />
 			</div>
 
 			<div className={`${styles.instructorContainer} ${isInstructorsExpanded ? styles.expanded : ''}`}>
