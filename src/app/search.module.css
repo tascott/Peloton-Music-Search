@@ -24,6 +24,7 @@
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    align-items: center;
 }
 
 .searchInput {
@@ -230,4 +231,37 @@
     .toggleButton+.toggleButton {
         margin-left: 16px;
     }
+}
+
+.difficultyContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.difficultyLabels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--foreground);
+}
+
+/* Override default range slider styles */
+.difficultyContainer :global(.range-slider) {
+    height: 4px;
+    background: var(--secondary);
+}
+
+.difficultyContainer :global(.range-slider__range) {
+    background: var(--accent);
+}
+
+.difficultyContainer :global(.range-slider__thumb) {
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border: 2px solid var(--background);
 }

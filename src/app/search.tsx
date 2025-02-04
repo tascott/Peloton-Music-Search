@@ -1,10 +1,12 @@
 'use client';
-import { useState, ChangeEvent, useMemo } from 'react';
+import { useState, ChangeEvent, useMemo, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Workout from './workout';
 import RideTimeRow from './rideTimeRow';
 import InstructorRow from './instructorRow';
 import styles from './search.module.css';
+import RangeSlider from 'react-range-slider-input';
+import 'react-range-slider-input/dist/style.css';
 
 type Song = {
 	id: number;
@@ -50,6 +52,9 @@ export default function Search() {
 	const [hasSearched, setHasSearched] = useState(false);
 	const limit = 100;
 	const [activeTimes, setActiveTimes] = useState<number[]>([]);
+	const [minDifficulty, setMinDifficulty] = useState(6);
+	const [maxDifficulty, setMaxDifficulty] = useState(10);
+	const [selectedDifficultyRange, setSelectedDifficultyRange] = useState<[number, number]>([6, 10]);
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -113,10 +118,20 @@ export default function Search() {
 			setActiveTimes(uniqueTimes);
 			setSongs(typedData);
 			setHasSearched(true);
+			const difficulties = typedData.map((song) => song.workout_details.difficulty_rating_avg).filter((d): d is number => d !== undefined);
+			const minDiff = Math.floor(Math.min(...difficulties));
+			const maxDiff = Math.ceil(Math.max(...difficulties));
+			setMinDifficulty(minDiff);
+			setMaxDifficulty(maxDiff);
+			setSelectedDifficultyRange([minDiff, maxDiff]);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
+	useEffect(() => {
+		console.log(minDifficulty, maxDifficulty);
+	}, [minDifficulty, maxDifficulty]);
 
 	const handleAddToSearch = (e: ChangeEvent<HTMLInputElement>) => {
 		const type = e.target.getAttribute('param-type');
@@ -141,27 +156,42 @@ export default function Search() {
 		return true;
 	};
 
-	const shouldShowIfTimeAndInstructorPresent = (song: Song) => {
-		return shouldShowIfInstructorPresent(song) && shouldShowIfTimePresent(song);
+	const shouldShowIfDifficultyInRange = (song: Song) => {
+		const difficulty = song.workout_details?.difficulty_rating_avg;
+		if (!difficulty) return true;
+		return difficulty >= selectedDifficultyRange[0] && difficulty <= selectedDifficultyRange[1];
 	};
 
-	const filteredSongs = songs.filter((song) => shouldShowIfInstructorPresent(song) && shouldShowIfTimePresent(song));
+	const shouldShowIfTimeAndInstructorPresent = (song: Song) => {
+		return shouldShowIfInstructorPresent(song) &&
+			   shouldShowIfTimePresent(song) &&
+			   shouldShowIfDifficultyInRange(song);
+	};
+
+	const filteredSongs = songs.filter((song) =>
+		shouldShowIfInstructorPresent(song) &&
+		shouldShowIfTimePresent(song) &&
+		shouldShowIfDifficultyInRange(song)
+	);
 
 	const totalFoundMessage = useMemo(() => {
 		if (filteredSongs.length === 0) {
 			return '';
-		} else if (filteredSongs.length < limit) {
-			return `Filtering ${filteredSongs.length} of ${songs.length} songs`;
-		} else {
-			return `${filteredSongs.length}+ songs found`;
 		}
-	}, [filteredSongs.length, songs.length]);
+		return `Showing ${filteredSongs.length} songs`;
+	}, [filteredSongs.length]);
 
 	return (
 		<div className={styles.searchContainer}>
 			<h1 className={styles.title}>Peloton Music Search</h1>
 			<div className={styles.searchInputWrapper}>
-				<input type="text" placeholder="e.g. Not Like Us" param-type="song" onChange={handleAddToSearch} className={styles.searchInput} />
+				<input
+					type="text"
+					placeholder="e.g. Not Like Us"
+					param-type="song"
+					onChange={handleAddToSearch}
+					className={styles.searchInput}
+				/>
 				<input
 					type="text"
 					placeholder="e.g. Kendrick Lamar"
@@ -175,36 +205,86 @@ export default function Search() {
 			</div>
 			<div className="">{totalFoundMessage}</div>
 			{hasSearched && (
-				<div className={styles.filterButtonsContainer}>
-					<button
-						className={`${styles.toggleButton} ${isTimesExpanded ? styles.expanded : ''} ${selectedTimes.length > 0 ? styles.active : ''}`}
+				<>
+					<div className={styles.filterButtonsContainer}>
+						<button
+							className={`${styles.toggleButton} ${
+							isTimesExpanded ? styles.expanded : ''
+						} ${selectedTimes.length > 0 ? styles.active : ''}`}
 						onClick={toggleTimes}
 					>
-						Duration {selectedTimes.length > 0 && `(${selectedTimes.length})`}
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+						Duration{' '}
+						{selectedTimes.length > 0 &&
+							`(${selectedTimes.length})`}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+						>
 							<path d="M6 9l6 6 6-6" />
 						</svg>
 					</button>
 
 					<button
-						className={`${styles.toggleButton} ${isInstructorsExpanded ? styles.expanded : ''} ${
+						className={`${styles.toggleButton} ${
+							isInstructorsExpanded ? styles.expanded : ''
+						} ${
 							selectedInstructors.length > 0 ? styles.active : ''
 						}`}
 						onClick={toggleInstructors}
 					>
-						Instructors {selectedInstructors.length > 0 && `(${selectedInstructors.length})`}
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+						Instructors{' '}
+						{selectedInstructors.length > 0 &&
+							`(${selectedInstructors.length})`}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+						>
 							<path d="M6 9l6 6 6-6" />
 						</svg>
 					</button>
 				</div>
+				<div className={styles.difficultyContainer}>
+					<div className={styles.difficultyLabels}>
+						<span>Difficulty: {selectedDifficultyRange[0].toFixed(1)}</span>
+						<span>{selectedDifficultyRange[1].toFixed(1)}</span>
+					</div>
+					<RangeSlider
+						min={minDifficulty}
+						max={maxDifficulty}
+						value={selectedDifficultyRange}
+						onInput={(value: [number, number]) => {
+							setSelectedDifficultyRange(value);
+						}}
+						step={0.1}
+					/>
+				</div>
+				</>
 			)}
 
-			<div className={`${styles.timeContainer} ${isTimesExpanded ? styles.expanded : ''}`}>
-				<RideTimeRow rideTimes={rideTimes} selectedTimes={selectedTimes} onTimeSelect={handleTimeSelection} activeTimes={activeTimes} />
+			<div
+				className={`${styles.timeContainer} ${
+					isTimesExpanded ? styles.expanded : ''
+				}`}
+			>
+				<RideTimeRow
+					rideTimes={rideTimes}
+					selectedTimes={selectedTimes}
+					onTimeSelect={handleTimeSelection}
+					activeTimes={activeTimes}
+				/>
 			</div>
 
-			<div className={`${styles.instructorContainer} ${isInstructorsExpanded ? styles.expanded : ''}`}>
+			<div
+				className={`${styles.instructorContainer} ${
+					isInstructorsExpanded ? styles.expanded : ''
+				}`}
+			>
 				<InstructorRow
 					key={selectedInstructors.join(',')}
 					selectedInstructors={selectedInstructors}
