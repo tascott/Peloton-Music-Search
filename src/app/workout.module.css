@@ -88,12 +88,13 @@
     color: var(--foreground);
     margin: 0;
     line-height: 1.4;
-    opacity: 0.8;
 }
 
 .songArtist {
-    color: #666;
-    font-size: 0.9rem;
+    color: var(--foreground);
+    opacity: 0.6;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 .button {

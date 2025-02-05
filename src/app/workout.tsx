@@ -35,8 +35,8 @@ export default function Workout(props: { workout_details: WorkoutType; songData:
 					<div className={styles.songInfo}>
 						<div>
 							<p className={styles.songTitle}>
-								{songData.title} - {songData.artist}
-								<span className={styles.songArtist}></span>
+								{songData.title}
+								<span className={styles.songArtist}> — {songData.artist}</span>
 							</p>
 						</div>
 					</div>
