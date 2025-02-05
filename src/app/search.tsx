@@ -105,7 +105,11 @@ export default function Search() {
 				query = query.ilike('title', `%${songSearchTerm}%`);
 			}
 			if (artistSearchTerm) {
-				query = query.ilike('artist_names', `%${artistSearchTerm}%`);
+				const terms = artistSearchTerm.toLowerCase().split(' ').filter(Boolean);
+				terms.forEach(term => {
+					// Use word boundaries to match complete words only
+					query = query.or(`artist_names.ilike.*% ${term} %*,artist_names.ilike.${term} %*,artist_names.ilike.*% ${term},artist_names.eq.${term}`);
+				});
 			}
 
 			const { data, error } = await query.limit(limit);
@@ -130,7 +134,6 @@ export default function Search() {
 	};
 
 	useEffect(() => {
-		console.log(minDifficulty, maxDifficulty);
 	}, [minDifficulty, maxDifficulty]);
 
 	const handleAddToSearch = (e: ChangeEvent<HTMLInputElement>) => {
