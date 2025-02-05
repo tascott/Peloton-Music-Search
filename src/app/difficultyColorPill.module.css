@@ -10,4 +10,5 @@
     color: white;
     transition: all 0.3s ease;
     min-width: 40px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
