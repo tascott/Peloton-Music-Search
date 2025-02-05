@@ -186,7 +186,7 @@ export default function Search() {
 			<div className={styles.searchInputWrapper}>
 				<input
 					type="text"
-					placeholder="e.g. Not Like Us"
+					placeholder="SONG e.g. Not Like Us"
 					param-type="song"
 					onChange={handleAddToSearch}
 					className={styles.searchInput}
@@ -198,7 +198,7 @@ export default function Search() {
 				/>
 				<input
 					type="text"
-					placeholder="e.g. Kendrick Lamar"
+					placeholder="ARTIST e.g. Kendrick Lamar"
 					param-type="artist"
 					onChange={handleAddToSearch}
 					className={styles.searchInput}
@@ -213,7 +213,7 @@ export default function Search() {
 				</button>
 			</div>
 			<div className="">{totalFoundMessage}</div>
-			{hasSearched && (
+			{hasSearched && songs.length > 0 && (
 				<>
 					<div className={styles.filterButtonsContainer}>
 						<button
