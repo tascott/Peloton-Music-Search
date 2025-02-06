@@ -7,6 +7,7 @@ import InstructorRow from './instructorRow';
 import styles from './search.module.css';
 import RangeSlider from 'react-range-slider-input';
 import 'react-range-slider-input/dist/style.css';
+import AuthButton from './auth';
 
 type Song = {
 	id: number;
@@ -182,6 +183,7 @@ export default function Search() {
 
 	return (
 		<div className={styles.searchContainer}>
+			<AuthButton />
 			<h1 className={styles.title}>Peloton Music Search</h1>
 			<div className={styles.searchInputWrapper}>
 				<input
