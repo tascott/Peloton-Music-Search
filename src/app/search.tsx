@@ -153,9 +153,11 @@ export default function Search() {
 			const difficulties = typedData
 				.map((song) => song.workout_details.difficulty_rating_avg)
 				.filter((d): d is number => d !== undefined);
-			setMinDifficulty(Math.floor(Math.min(...difficulties)));
-			setMaxDifficulty(Math.ceil(Math.max(...difficulties)));
-			setSelectedDifficultyRange([minDifficulty, maxDifficulty]);
+			const minDiff = Math.floor(Math.min(...difficulties));
+			const maxDiff = Math.ceil(Math.max(...difficulties));
+			setMinDifficulty(minDiff);
+			setMaxDifficulty(maxDiff);
+			setSelectedDifficultyRange([minDiff, maxDiff]);
 		} catch (error) {
 			console.error(error);
 		}
@@ -267,6 +269,9 @@ export default function Search() {
 		<div className={styles.searchContainer}>
 			<AuthButton />
 			<h1 className={styles.title}>Peloton Music Search</h1>
+			<p className={styles.description}>
+				Search for Peloton workouts by song or artist, filter by instructor, duration, and difficulty level, and save your favorite workouts to custom playlists.
+			</p>
 			<div className={styles.searchInputWrapper}>
 				<input
 					type="text"

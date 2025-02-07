@@ -81,7 +81,7 @@ export default function Workout(props: WorkoutProps) {
 										className={styles.button}
 										onClick={() => setShowPlaylistDropdown(!showPlaylistDropdown)}
 									>
-										Save
+										Save Workout
 									</button>
 									{showPlaylistDropdown && (
 										<div className={styles.dropdown}>

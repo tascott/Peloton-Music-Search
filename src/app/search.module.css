@@ -103,6 +103,16 @@
     letter-spacing: -0.03em;
 }
 
+.description {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--secondary);
+    max-width: 600px;
+    margin: 1rem auto;
+    line-height: 1.5;
+}
+
 @media (max-width: 768px) {
     .title {
         font-size: 2rem;

@@ -14,6 +14,15 @@ type Workout = {
     instructor_id?: string;
 };
 
+type WorkoutResponse = {
+    workout_id: string;
+    web_workouts: {
+        id: string;
+        title: string;
+        instructor_id?: string;
+    };
+};
+
 export default function Lists() {
     const [lists, setLists] = useState<List[]>([]);
     const [newListName, setNewListName] = useState('');
@@ -79,39 +88,6 @@ export default function Lists() {
         fetchLists();
     };
 
-    const addWorkoutToList = async (listId: string, workout: Workout) => {
-        const { error } = await supabase
-            .from('list_workouts')
-            .insert([{
-                list_id: listId,
-                workout_id: workout.id
-            }]);
-
-        if (error) {
-            console.error('Error adding workout to list:', error);
-            return;
-        }
-
-        if (selectedList?.id === listId) {
-            fetchListWorkouts(listId);
-        }
-    };
-
-    const removeWorkoutFromList = async (listId: string, workoutId: string) => {
-        const { error } = await supabase
-            .from('list_workouts')
-            .delete()
-            .eq('list_id', listId)
-            .eq('workout_id', workoutId);
-
-        if (error) {
-            console.error('Error removing workout from list:', error);
-            return;
-        }
-
-        fetchListWorkouts(listId);
-    };
-
     const fetchListWorkouts = async (listId: string) => {
         const { data, error } = await supabase
             .from('list_workouts')
@@ -130,7 +106,29 @@ export default function Lists() {
             return;
         }
 
-        setListWorkouts(data.map(item => item.web_workouts));
+        const typedData = data as unknown as WorkoutResponse[];
+        const workouts = typedData.map(item => ({
+            id: item.web_workouts.id,
+            title: item.web_workouts.title,
+            instructor_id: item.web_workouts.instructor_id
+        }));
+
+        setListWorkouts(workouts);
+    };
+
+    const removeWorkoutFromList = async (listId: string, workoutId: string) => {
+        const { error } = await supabase
+            .from('list_workouts')
+            .delete()
+            .eq('list_id', listId)
+            .eq('workout_id', workoutId);
+
+        if (error) {
+            console.error('Error removing workout from list:', error);
+            return;
+        }
+
+        fetchListWorkouts(listId);
     };
 
     return (
