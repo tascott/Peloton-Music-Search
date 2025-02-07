@@ -67,8 +67,10 @@
     padding: 32px;
     border-radius: 16px;
     position: relative;
-    max-width: 400px;
+    max-width: 800px;
     width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .authContent {
@@ -172,4 +174,21 @@
 
 .closeButton:hover {
     background: var(--cream);
+}
+
+.profilePlaylists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.playlistItem {
+    background: var(--cream);
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }

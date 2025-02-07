@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
@@ -12,10 +12,22 @@ type Playlist = {
     items?: ListItem[];
 };
 
+type WorkoutType = {
+    id: string;
+    title: string;
+    duration?: number;
+    image_url?: string;
+    instructor_id?: string;
+    description?: string;
+    fitness_discipline?: string;
+    scheduled_time?: string;
+    difficulty_rating_avg?: number;
+};
+
 type ListItem = {
     id: string;
     workout_id: string;
-    workout_details?: WorkoutType;  // later to fetch and display workout details
+    workout_details?: WorkoutType;
 };
 
 export default function AuthButton() {
@@ -24,21 +36,8 @@ export default function AuthButton() {
     const [showProfile, setShowProfile] = useState(false);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [playlistName, setPlaylistName] = useState('');
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-        });
 
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    const fetchPlaylistItems = async (playlistId: string) => {
+    const fetchPlaylistItems = useCallback(async (playlistId: string) => {
         const { data: items, error } = await supabase
             .from('list_items')
             .select(`
@@ -53,7 +52,59 @@ export default function AuthButton() {
             return [];
         }
         return items;
-    };
+    }, []);
+
+    const refreshPlaylists = useCallback(async () => {
+        if (!session?.user.id) return;
+
+        const { data: userLists, error } = await supabase
+            .from('user_lists')
+            .select('*')
+            .eq('user_id', session.user.id);
+
+        if (error) {
+            console.error('Error fetching playlists:', error);
+            return;
+        }
+
+        const playlistsWithItems = await Promise.all(
+            userLists.map(async (playlist) => ({
+                ...playlist,
+                items: await fetchPlaylistItems(playlist.id)
+            }))
+        );
+
+        setPlaylists(playlistsWithItems);
+    }, [session?.user.id, fetchPlaylistItems]);
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+        });
+
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (session?.user.id) {
+            refreshPlaylists();
+        }
+    }, [session, refreshPlaylists]);
+
+    useEffect(() => {
+        const handlePlaylistUpdate = () => {
+            refreshPlaylists();
+        };
+
+        window.addEventListener('playlistsUpdated', handlePlaylistUpdate);
+        return () => window.removeEventListener('playlistsUpdated', handlePlaylistUpdate);
+    }, [refreshPlaylists]);
 
     const addPlaylist = async (name: string) => {
         console.log('addPlaylist');
@@ -107,33 +158,6 @@ export default function AuthButton() {
         }
         return true;
     };
-
-    useEffect(() => {
-        const fetchPlaylists = async () => {
-            if (!session?.user.id) return;
-
-            const { data: userLists, error } = await supabase
-                .from('user_lists')
-                .select('*')
-                .eq('user_id', session.user.id);
-
-            if (error) {
-                console.error('Error fetching playlists:', error);
-                return;
-            }
-
-            const playlistsWithItems = await Promise.all(
-                userLists.map(async (playlist) => ({
-                    ...playlist,
-                    items: await fetchPlaylistItems(playlist.id)
-                }))
-            );
-
-            setPlaylists(playlistsWithItems);
-        };
-
-        fetchPlaylists();
-    }, [session?.user.id]);
 
     return (
 		<div className={styles.authContainer}>

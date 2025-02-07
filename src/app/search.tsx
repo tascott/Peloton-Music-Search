@@ -8,6 +8,7 @@ import styles from './search.module.css';
 import RangeSlider from 'react-range-slider-input';
 import 'react-range-slider-input/dist/style.css';
 import AuthButton from './auth';
+import { usePlaylistContext } from './PlaylistContext';
 
 type Song = {
 	id: number;
@@ -41,7 +42,12 @@ const rideTimes = {
 	7200: '120 minutes',
 };
 
+type SearchProps = {
+	onPlaylistUpdate?: () => Promise<void>;
+};
+
 export default function Search() {
+	const { refreshPlaylists } = usePlaylistContext();
 	const [songs, setSongs] = useState<Song[]>([]);
 	const [songSearchTerm, setSongSearchTerm] = useState(''); // From the songs input
 	const [artistSearchTerm, setArtistSearchTerm] = useState(''); // From the artists input
@@ -56,6 +62,8 @@ export default function Search() {
 	const [minDifficulty, setMinDifficulty] = useState(0);
 	const [maxDifficulty, setMaxDifficulty] = useState(10);
 	const [selectedDifficultyRange, setSelectedDifficultyRange] = useState<[number, number]>([0, 10]);
+	const [playlists, setPlaylists] = useState<Playlist[]>([]);
+	const [addWorkoutToPlaylist, setAddWorkoutToPlaylist] = useState(null);
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -200,6 +208,45 @@ export default function Search() {
 		return `Showing ${filteredSongs.length} songs`;
 	}, [filteredSongs.length]);
 
+	// Add this useEffect to fetch playlists when component mounts
+	useEffect(() => {
+		const fetchPlaylists = async () => {
+			const { data: { session } } = await supabase.auth.getSession();
+			if (!session) return;
+
+			const { data, error } = await supabase
+				.from('user_lists')
+				.select('*')
+				.eq('user_id', session.user.id);
+
+			if (error) {
+				console.error('Error fetching playlists:', error);
+				return;
+			}
+			setPlaylists(data);
+		};
+
+		fetchPlaylists();
+	}, []);
+
+	// Add function to handle adding workout to playlist
+	const handleAddToPlaylist = async (playlistId: string, workoutId: string) => {
+		const { error } = await supabase
+			.from('list_items')
+			.insert({
+				list_id: playlistId,
+				workout_id: workoutId
+			});
+
+		if (error) {
+			console.error('Error adding to playlist:', error);
+			return false;
+		}
+
+		await refreshPlaylists();
+		return true;
+	};
+
 	return (
 		<div className={styles.searchContainer}>
 			<AuthButton />
@@ -304,6 +351,8 @@ export default function Search() {
 									artist: song.artist_names,
 									image_url: song.image_url,
 								}}
+								playlists={playlists}
+								onAddToPlaylist={handleAddToPlaylist}
 							/>
 						)
 				)}

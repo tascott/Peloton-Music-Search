@@ -2,6 +2,7 @@
 import { instructors } from '@/data/instructors';
 import styles from './workout.module.css';
 import DifficultyColorPill from './difficultyColorPill';
+import { useState } from 'react';
 
 type WorkoutSong = {
 	title: string;
@@ -22,9 +23,31 @@ type WorkoutType = {
 	song?: WorkoutSong;
 };
 
-export default function Workout(props: { workout_details: WorkoutType; songData: WorkoutSong }) {
-	const { workout_details, songData } = props;
+type Playlist = {
+	id: string;
+	name: string;
+};
+
+type WorkoutProps = {
+	workout_details: WorkoutType;
+	songData: WorkoutSong;
+	playlists?: Playlist[];
+	onAddToPlaylist?: (playlistId: string, workoutId: string) => Promise<boolean>;
+};
+
+export default function Workout(props: WorkoutProps) {
+	const { workout_details, songData, playlists, onAddToPlaylist } = props;
+	const [showPlaylistDropdown, setShowPlaylistDropdown] = useState(false);
 	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout_details.id}`;
+
+	const handleAddToPlaylist = async (playlistId: string) => {
+		if (onAddToPlaylist) {
+			const success = await onAddToPlaylist(playlistId, workout_details.id);
+			if (success) {
+				setShowPlaylistDropdown(false);
+			}
+		}
+	};
 
 	return (
 		<>
@@ -44,18 +67,43 @@ export default function Workout(props: { workout_details: WorkoutType; songData:
 						<div className={styles.pillWrapper}>
 							{workout_details.difficulty_rating_avg && <DifficultyColorPill difficulty={workout_details.difficulty_rating_avg} />}
 						</div>
-						<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
-							Open
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M7 17L17 7M17 7H8M17 7V16"
-									stroke="currentColor"
-									strokeWidth="2"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-							</svg>
-						</button>
+						<div className={styles.buttonGroup}>
+							{playlists && playlists.length > 0 && (
+								<div className={styles.dropdownContainer}>
+									<button
+										className={styles.button}
+										onClick={() => setShowPlaylistDropdown(!showPlaylistDropdown)}
+									>
+										Save
+									</button>
+									{showPlaylistDropdown && (
+										<div className={styles.dropdown}>
+											{playlists.map(playlist => (
+												<button
+													key={playlist.id}
+													className={styles.dropdownItem}
+													onClick={() => handleAddToPlaylist(playlist.id)}
+												>
+													{playlist.name}
+												</button>
+											))}
+										</div>
+									)}
+								</div>
+							)}
+							<button className={styles.button} onClick={() => window.open(workoutLink, '_blank')}>
+								Open
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path
+										d="M7 17L17 7M17 7H8M17 7V16"
+										stroke="currentColor"
+										strokeWidth="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								</svg>
+							</button>
+						</div>
 					</div>
 				</div>
 			)}
