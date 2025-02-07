@@ -10,6 +10,9 @@ export default function AuthButton() {
     const [session, setSession] = useState<Session | null>(null);
     const [showAuth, setShowAuth] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    // const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
+
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -23,6 +26,10 @@ export default function AuthButton() {
 
         return () => subscription.unsubscribe();
     }, []);
+
+    const addPlaylist = () => {
+        console.log('addPlaylist');
+    };
 
     return (
 		<div className={styles.authContainer}>
@@ -42,10 +49,41 @@ export default function AuthButton() {
 							<div className={styles.profileContent}>
 								<h1>Profile</h1>
 								<div className={styles.profileInfo}>
-									<p>Email: {session.user.email}</p>
-									<p>Name: {session.user.user_metadata.name}</p>
-									<p>Avatar: {session.user.user_metadata.avatar_url}</p>
+									<p>{session.user.email}</p>
 								</div>
+								<hr />
+								<div className={styles.addPlaylistForm}>
+									<label
+										htmlFor="playlistName"
+										className={styles.addPlaylistLabel}
+									>
+										Add new playlist
+									</label>
+									<input
+										type="text"
+										placeholder="Playlist Name"
+										className={styles.addPlaylistInput}
+									/>
+									<button
+										className={styles.addPlaylistButton}
+										onClick={() => addPlaylist()}
+									>
+										Create
+									</button>
+								</div>
+
+								<h3 className={styles.profileHeader}>
+									Playlists
+								</h3>
+
+								<div className={styles.profilePlaylists}>
+									{playlists.map((playlist) => (
+										<div key={playlist.id}>
+											<h2>{playlist.name}</h2>
+										</div>
+									))}
+								</div>
+
 								<button
 									className={styles.closeButton}
 									onClick={() => setShowProfile(false)}
@@ -55,6 +93,18 @@ export default function AuthButton() {
 							</div>
 						</div>
 					)}
+					{/* {showCreatePlaylist && (
+						<>
+							<div className={styles.createPlaylistModal}>
+								<div className={styles.createPlaylistContent}>
+									<h1>Create Playlist</h1>
+								</div>
+								<button onClick={() => setShowCreatePlaylist(false)} className={styles.closeButton}>
+									Close
+								</button>
+							</div>
+						</>
+					)} */}
 				</>
 			) : (
 				<>
