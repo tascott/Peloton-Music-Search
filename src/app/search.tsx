@@ -53,9 +53,9 @@ export default function Search() {
 	const [hasSearched, setHasSearched] = useState(false);
 	const limit = 100;
 	const [activeTimes, setActiveTimes] = useState<number[]>([]);
-	const [minDifficulty, setMinDifficulty] = useState(6);
+	const [minDifficulty, setMinDifficulty] = useState(0);
 	const [maxDifficulty, setMaxDifficulty] = useState(10);
-	const [selectedDifficultyRange, setSelectedDifficultyRange] = useState<[number, number]>([6, 10]);
+	const [selectedDifficultyRange, setSelectedDifficultyRange] = useState<[number, number]>([0, 10]);
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -106,36 +106,55 @@ export default function Search() {
 				query = query.ilike('title', `%${songSearchTerm}%`);
 			}
 			if (artistSearchTerm) {
-				const terms = artistSearchTerm.toLowerCase().split(' ').filter(Boolean);
-				terms.forEach(term => {
+				const terms = artistSearchTerm
+					.toLowerCase()
+					.split(' ')
+					.filter(Boolean);
+				terms.forEach((term) => {
 					// Use word boundaries to match complete words only
-					query = query.or(`artist_names.ilike.*% ${term} %*,artist_names.ilike.${term} %*,artist_names.ilike.*% ${term},artist_names.eq.${term}`);
+					query = query.or(
+						`artist_names.ilike.*% ${term} %*,artist_names.ilike.${term} %*,artist_names.ilike.*% ${term},artist_names.eq.${term}`
+					);
 				});
 			}
 
 			const { data, error } = await query.limit(limit);
-
 			if (error) throw error;
+
+			setHasSearched(true);
 			const typedData = data as unknown as Song[];
-			const uniqueInstructors = [...new Set(typedData.map((song) => song.workout_details.instructor_id))];
+
+			// Instructor calculations
+			const uniqueInstructors = [
+				...new Set(
+					typedData.map((song) => song.workout_details.instructor_id)
+				),
+			];
 			setActiveInstructors(uniqueInstructors.filter(Boolean));
-			const uniqueTimes = [...new Set(typedData.map((song) => song.workout_details.duration))].filter(Boolean) as number[];
+
+			// Time calculations
+			const uniqueTimes = [
+				...new Set(
+					typedData.map((song) => song.workout_details.duration)
+				),
+			].filter(Boolean) as number[];
 			setActiveTimes(uniqueTimes);
 			setSongs(typedData);
-			setHasSearched(true);
-			const difficulties = typedData.map((song) => song.workout_details.difficulty_rating_avg).filter((d): d is number => d !== undefined);
-			const minDiff = Math.floor(Math.min(...difficulties));
-			const maxDiff = Math.ceil(Math.max(...difficulties));
-			setMinDifficulty(minDiff);
-			setMaxDifficulty(maxDiff);
-			setSelectedDifficultyRange([minDiff, maxDiff]);
+
+			// Difficulty range calculations
+			const difficulties = typedData
+				.map((song) => song.workout_details.difficulty_rating_avg)
+				.filter((d): d is number => d !== undefined);
+			setMinDifficulty(Math.floor(Math.min(...difficulties)));
+			setMaxDifficulty(Math.ceil(Math.max(...difficulties)));
+			setSelectedDifficultyRange([minDifficulty, maxDifficulty]);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	useEffect(() => {
-	}, [minDifficulty, maxDifficulty]);
+	// useEffect(() => {
+	// }, [minDifficulty, maxDifficulty]);
 
 	const handleAddToSearch = (e: ChangeEvent<HTMLInputElement>) => {
 		const type = e.target.getAttribute('param-type');
