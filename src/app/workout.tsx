@@ -39,15 +39,19 @@ export default function Workout(props: WorkoutProps) {
 	const { workout_details, songData, playlists, onAddToPlaylist } = props;
 	const [showPlaylistDropdown, setShowPlaylistDropdown] = useState(false);
 	const [showSuccess, setShowSuccess] = useState(false);
+	const [showDuplicate, setShowDuplicate] = useState(false);
 	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout_details.id}`;
 
 	const handleAddToPlaylist = async (playlistId: string) => {
 		if (onAddToPlaylist) {
 			const success = await onAddToPlaylist(playlistId, workout_details.id);
+			setShowPlaylistDropdown(false);
 			if (success) {
-				setShowPlaylistDropdown(false);
 				setShowSuccess(true);
 				setTimeout(() => setShowSuccess(false), 2000);
+			} else {
+				setShowDuplicate(true);
+				setTimeout(() => setShowDuplicate(false), 2000);
 			}
 		}
 	};
@@ -55,7 +59,7 @@ export default function Workout(props: WorkoutProps) {
 	return (
 		<>
 			{songData && (
-				<div className={styles.workoutCard}>
+				<div className={`${styles.workoutCard} ${(showSuccess || showDuplicate) ? styles.showingMessage : ''}`}>
 					<h3 className={styles.title}>{workout_details.title}</h3>
 					<p className={styles.instructor}>{workout_details.instructor_id && instructors[workout_details.instructor_id]?.name}</p>
 					<div className={styles.songInfo}>
@@ -109,6 +113,9 @@ export default function Workout(props: WorkoutProps) {
 						</div>
 						{showSuccess && (
 							<div className={styles.successMessage}>Added to playlist!</div>
+						)}
+						{showDuplicate && (
+							<div className={styles.duplicateMessage}>Already in playlist</div>
 						)}
 					</div>
 				</div>

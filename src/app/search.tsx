@@ -29,6 +29,11 @@ type Song = {
 	};
 };
 
+type Playlist = {
+	id: string;
+	name: string;
+};
+
 const rideTimes = {
 	300: '5 minutes',
 	600: '10 minutes',
@@ -40,10 +45,6 @@ const rideTimes = {
 	4500: '75 minutes',
 	5400: '90 minutes',
 	7200: '120 minutes',
-};
-
-type SearchProps = {
-	onPlaylistUpdate?: () => Promise<void>;
 };
 
 export default function Search() {
@@ -63,7 +64,6 @@ export default function Search() {
 	const [maxDifficulty, setMaxDifficulty] = useState(10);
 	const [selectedDifficultyRange, setSelectedDifficultyRange] = useState<[number, number]>([0, 10]);
 	const [playlists, setPlaylists] = useState<Playlist[]>([]);
-	const [addWorkoutToPlaylist, setAddWorkoutToPlaylist] = useState(null);
 
 	const handleTimeSelection = (times: number[]) => {
 		setSelectedTimes(times);
@@ -231,15 +231,31 @@ export default function Search() {
 
 	// Add function to handle adding workout to playlist
 	const handleAddToPlaylist = async (playlistId: string, workoutId: string) => {
-		const { error } = await supabase
+		// Check if workout already exists in playlist
+		const { data: existingItems, error: checkError } = await supabase
+			.from('list_items')
+			.select('id')
+			.match({ list_id: playlistId, workout_id: workoutId });
+
+		if (checkError) {
+			console.error('Error checking for existing workout:', checkError);
+			return false;
+		}
+
+		if (existingItems && existingItems.length > 0) {
+			console.log('Workout already exists in playlist');
+			return false;
+		}
+
+		const { error: insertError } = await supabase
 			.from('list_items')
 			.insert({
 				list_id: playlistId,
 				workout_id: workoutId
 			});
 
-		if (error) {
-			console.error('Error adding to playlist:', error);
+		if (insertError) {
+			console.error('Error adding to playlist:', insertError);
 			return false;
 		}
 

@@ -5,6 +5,8 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Session } from '@supabase/supabase-js';
 import styles from './auth.module.css';
+import PlaylistWorkoutDetail from './playlistWorkoutDetail';
+import { instructors } from '@/data/instructors';
 
 type Playlist = {
     id: string;
@@ -36,6 +38,8 @@ export default function AuthButton() {
     const [showProfile, setShowProfile] = useState(false);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [playlistName, setPlaylistName] = useState('');
+    const [expandedPlaylists, setExpandedPlaylists] = useState<string[]>([]);
+    const [selectedWorkout, setSelectedWorkout] = useState<{workout: WorkoutType; playlistId: string} | null>(null);
 
     const fetchPlaylistItems = useCallback(async (playlistId: string) => {
         const { data: items, error } = await supabase
@@ -107,7 +111,6 @@ export default function AuthButton() {
     }, [refreshPlaylists]);
 
     const addPlaylist = async (name: string) => {
-        console.log('addPlaylist');
         const { data, error } = await supabase
             .from('user_lists')
             .insert({
@@ -130,22 +133,6 @@ export default function AuthButton() {
         }
     };
 
-    const addWorkoutToPlaylist = async (playlistId: string, workoutId: string) => {
-        const { data, error } = await supabase
-            .from('list_items')
-            .insert({
-                list_id: playlistId,
-                workout_id: workoutId
-            })
-            .select();
-
-        if (error) {
-            console.error('Error adding workout to playlist:', error);
-            return false;
-        }
-        return true;
-    };
-
     const removeWorkoutFromPlaylist = async (playlistId: string, workoutId: string) => {
         const { error } = await supabase
             .from('list_items')
@@ -157,6 +144,14 @@ export default function AuthButton() {
             return false;
         }
         return true;
+    };
+
+    const togglePlaylist = (playlistId: string) => {
+        setExpandedPlaylists(prev =>
+            prev.includes(playlistId)
+                ? prev.filter(id => id !== playlistId)
+                : [...prev, playlistId]
+        );
     };
 
     return (
@@ -208,20 +203,32 @@ export default function AuthButton() {
 								<div className={styles.profilePlaylists}>
 									{playlists.map((playlist) => (
 										<div key={playlist.id}>
-											<h2>{playlist.name}</h2>
-											<div className={styles.playlistItems}>
+											<div
+												className={styles.playlistHeader}
+												onClick={() => togglePlaylist(playlist.id)}
+											>
+												<h2>{playlist.name}</h2>
+												<button className={`${styles.playlistToggle} ${expandedPlaylists.includes(playlist.id) ? styles.expanded : ''}`}>
+													<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+													</svg>
+												</button>
+											</div>
+											<div className={`${styles.playlistItems} ${expandedPlaylists.includes(playlist.id) ? styles.expanded : ''}`}>
 												{playlist.items?.map((item) => (
-													<div key={item.id} className={styles.playlistItem}>
+													<div
+														key={item.id}
+														className={styles.playlistItem}
+														onClick={() => item.workout_details && setSelectedWorkout({
+															workout: item.workout_details,
+															playlistId: playlist.id
+														})}
+													>
 														{item.workout_details && (
-															<>
-																<span>{item.workout_details.title}</span>
-																<button
-																	onClick={() => removeWorkoutFromPlaylist(playlist.id, item.workout_id)}
-																	className={styles.removeButton}
-																>
-																	Remove
-																</button>
-															</>
+															<span>
+																{item.workout_details.title}
+																{item.workout_details.instructor_id && ` - ${instructors[item.workout_details.instructor_id].name}`}
+															</span>
 														)}
 													</div>
 												))}
@@ -229,6 +236,23 @@ export default function AuthButton() {
 										</div>
 									))}
 								</div>
+
+								{selectedWorkout && (
+									<PlaylistWorkoutDetail
+										workout={selectedWorkout.workout}
+										onClose={() => setSelectedWorkout(null)}
+										onDelete={async () => {
+											const success = await removeWorkoutFromPlaylist(
+												selectedWorkout.playlistId,
+												selectedWorkout.workout.id
+											);
+											if (success) {
+												refreshPlaylists();
+												setSelectedWorkout(null);
+											}
+										}}
+									/>
+								)}
 
 								<button
 									className={styles.closeButton}
