@@ -195,7 +195,7 @@
 
 @media (min-width: 768px) {
     .searchContainer {
-        padding: 64px;
+        padding: 0px;
     }
 
     .searchContainer>* {

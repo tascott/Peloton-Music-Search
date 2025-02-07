@@ -20,7 +20,7 @@
     gap: 12px;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     min-height: 200px;
 }
 
@@ -140,18 +140,12 @@
 
 .actionRow {
     display: flex;
-    align-items: stretch;
+    flex-direction: column;
     gap: 12px;
     margin-top: auto;
 }
 
 .pillWrapper {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-}
-
-.pillWrapper>div {
     width: 100%;
 }
 
@@ -176,6 +170,7 @@
     padding: 8px;
     min-width: 200px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
 
 .dropdownItem {
@@ -194,4 +189,31 @@
 
 .dropdownItem:hover {
     background: var(--cream);
+}
+
+.successMessage {
+    background: var(--background);
+    color: #2ecc71;
+    font-size: 13px;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    text-align: center;
+    animation: fadeOut 2s forwards;
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid #2ecc71;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 200;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    70% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }

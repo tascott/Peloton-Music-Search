@@ -38,6 +38,7 @@ type WorkoutProps = {
 export default function Workout(props: WorkoutProps) {
 	const { workout_details, songData, playlists, onAddToPlaylist } = props;
 	const [showPlaylistDropdown, setShowPlaylistDropdown] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
 	const workoutLink = `https://members.onepeloton.co.uk/classes/cycling?utm_source=ios_app&utm_medium=in_app&code=%3D&locale=en-GB&modal=classDetailsModal&classId=${workout_details.id}`;
 
 	const handleAddToPlaylist = async (playlistId: string) => {
@@ -45,6 +46,8 @@ export default function Workout(props: WorkoutProps) {
 			const success = await onAddToPlaylist(playlistId, workout_details.id);
 			if (success) {
 				setShowPlaylistDropdown(false);
+				setShowSuccess(true);
+				setTimeout(() => setShowSuccess(false), 2000);
 			}
 		}
 	};
@@ -104,6 +107,9 @@ export default function Workout(props: WorkoutProps) {
 								</svg>
 							</button>
 						</div>
+						{showSuccess && (
+							<div className={styles.successMessage}>Added to playlist!</div>
+						)}
 					</div>
 				</div>
 			)}
