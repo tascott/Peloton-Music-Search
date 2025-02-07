@@ -6,13 +6,24 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Session } from '@supabase/supabase-js';
 import styles from './auth.module.css';
 
+type Playlist = {
+    id: string;
+    name: string;
+    items?: ListItem[];
+};
+
+type ListItem = {
+    id: string;
+    workout_id: string;
+    workout_details?: WorkoutType;  // later to fetch and display workout details
+};
+
 export default function AuthButton() {
     const [session, setSession] = useState<Session | null>(null);
     const [showAuth, setShowAuth] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
-    // const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
-
+    const [playlistName, setPlaylistName] = useState('');
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -27,9 +38,102 @@ export default function AuthButton() {
         return () => subscription.unsubscribe();
     }, []);
 
-    const addPlaylist = () => {
-        console.log('addPlaylist');
+    const fetchPlaylistItems = async (playlistId: string) => {
+        const { data: items, error } = await supabase
+            .from('list_items')
+            .select(`
+                id,
+                workout_id,
+                workout_details:web_workouts(*)
+            `)
+            .eq('list_id', playlistId);
+
+        if (error) {
+            console.error('Error fetching playlist items:', error);
+            return [];
+        }
+        return items;
     };
+
+    const addPlaylist = async (name: string) => {
+        console.log('addPlaylist');
+        const { data, error } = await supabase
+            .from('user_lists')
+            .insert({
+                name,
+                user_id: session?.user.id
+            })
+            .select();
+
+        if (error) {
+            console.error(error);
+        } else if (data) {
+            const playlistsWithItems = await Promise.all(
+                data.map(async (playlist) => ({
+                    ...playlist,
+                    items: await fetchPlaylistItems(playlist.id)
+                }))
+            );
+            setPlaylists(prevPlaylists => [...prevPlaylists, ...playlistsWithItems]);
+            setPlaylistName('');
+        }
+    };
+
+    const addWorkoutToPlaylist = async (playlistId: string, workoutId: string) => {
+        const { data, error } = await supabase
+            .from('list_items')
+            .insert({
+                list_id: playlistId,
+                workout_id: workoutId
+            })
+            .select();
+
+        if (error) {
+            console.error('Error adding workout to playlist:', error);
+            return false;
+        }
+        return true;
+    };
+
+    const removeWorkoutFromPlaylist = async (playlistId: string, workoutId: string) => {
+        const { error } = await supabase
+            .from('list_items')
+            .delete()
+            .match({ list_id: playlistId, workout_id: workoutId });
+
+        if (error) {
+            console.error('Error removing workout from playlist:', error);
+            return false;
+        }
+        return true;
+    };
+
+    useEffect(() => {
+        const fetchPlaylists = async () => {
+            if (!session?.user.id) return;
+
+            const { data: userLists, error } = await supabase
+                .from('user_lists')
+                .select('*')
+                .eq('user_id', session.user.id);
+
+            if (error) {
+                console.error('Error fetching playlists:', error);
+                return;
+            }
+
+            const playlistsWithItems = await Promise.all(
+                userLists.map(async (playlist) => ({
+                    ...playlist,
+                    items: await fetchPlaylistItems(playlist.id)
+                }))
+            );
+
+            setPlaylists(playlistsWithItems);
+        };
+
+        fetchPlaylists();
+    }, [session?.user.id]);
 
     return (
 		<div className={styles.authContainer}>
@@ -63,10 +167,11 @@ export default function AuthButton() {
 										type="text"
 										placeholder="Playlist Name"
 										className={styles.addPlaylistInput}
+                                        onChange={(e) => setPlaylistName(e.target.value)}
 									/>
 									<button
 										className={styles.addPlaylistButton}
-										onClick={() => addPlaylist()}
+										onClick={() => addPlaylist(playlistName)}
 									>
 										Create
 									</button>
@@ -80,6 +185,23 @@ export default function AuthButton() {
 									{playlists.map((playlist) => (
 										<div key={playlist.id}>
 											<h2>{playlist.name}</h2>
+											<div className={styles.playlistItems}>
+												{playlist.items?.map((item) => (
+													<div key={item.id} className={styles.playlistItem}>
+														{item.workout_details && (
+															<>
+																<span>{item.workout_details.title}</span>
+																<button
+																	onClick={() => removeWorkoutFromPlaylist(playlist.id, item.workout_id)}
+																	className={styles.removeButton}
+																>
+																	Remove
+																</button>
+															</>
+														)}
+													</div>
+												))}
+											</div>
 										</div>
 									))}
 								</div>
@@ -93,18 +215,6 @@ export default function AuthButton() {
 							</div>
 						</div>
 					)}
-					{/* {showCreatePlaylist && (
-						<>
-							<div className={styles.createPlaylistModal}>
-								<div className={styles.createPlaylistContent}>
-									<h1>Create Playlist</h1>
-								</div>
-								<button onClick={() => setShowCreatePlaylist(false)} className={styles.closeButton}>
-									Close
-								</button>
-							</div>
-						</>
-					)} */}
 				</>
 			) : (
 				<>
