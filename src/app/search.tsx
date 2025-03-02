@@ -210,25 +210,29 @@ export default function Search() {
 		return `Showing ${filteredSongs.length} songs`;
 	}, [filteredSongs.length]);
 
-	// Add this useEffect to fetch playlists when component mounts
+	const fetchPlaylists = async () => {
+		const { data: { session } } = await supabase.auth.getSession();
+		if (!session) return;
+
+		const { data, error } = await supabase
+			.from('user_lists')
+			.select('*')
+			.eq('user_id', session.user.id);
+
+		if (error) {
+			console.error('Error fetching playlists:', error);
+			return;
+		}
+		setPlaylists(data);
+	};
+
 	useEffect(() => {
-		const fetchPlaylists = async () => {
-			const { data: { session } } = await supabase.auth.getSession();
-			if (!session) return;
-
-			const { data, error } = await supabase
-				.from('user_lists')
-				.select('*')
-				.eq('user_id', session.user.id);
-
-			if (error) {
-				console.error('Error fetching playlists:', error);
-				return;
-			}
-			setPlaylists(data);
+		const handlePlaylistUpdate = () => {
+			fetchPlaylists();
 		};
 
-		fetchPlaylists();
+		window.addEventListener('playlistsUpdated', handlePlaylistUpdate);
+		return () => window.removeEventListener('playlistsUpdated', handlePlaylistUpdate);
 	}, []);
 
 	// Add function to handle adding workout to playlist

@@ -130,6 +130,7 @@ export default function AuthButton() {
             );
             setPlaylists(prevPlaylists => [...prevPlaylists, ...playlistsWithItems]);
             setPlaylistName('');
+            window.dispatchEvent(new CustomEvent('playlistsUpdated'));
         }
     };
 
